@@ -153,7 +153,12 @@ export function CustomersTable({
   const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
   const customerOrders = active
-    ? orders.filter((order) => order.customerId === active.id)
+    ? orders.filter(
+        (order) =>
+          order.customerId === active.id ||
+          (Boolean(active.phone) && order.customerPhone === active.phone) ||
+          (Boolean(active.name) && order.customerName === active.name),
+      )
     : [];
 
   const run = async (

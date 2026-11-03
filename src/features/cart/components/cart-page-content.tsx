@@ -15,10 +15,12 @@ import { CartLineItem } from "./cart-line-item";
 import { useCartStore } from "../store/cart-store";
 import { computeSavings, computeTotals } from "../lib/totals";
 import { useMounted } from "@/lib/hooks/use-mounted";
+import { useStoreSettings } from "@/lib/hooks/use-store-settings";
 import { formatNumber, toPersianDigits } from "@/lib/format";
 import { FREE_SHIPPING_THRESHOLD, TAX_RATE } from "@/lib/constants";
 
 export function CartPageContent() {
+  const settings = useStoreSettings();
   const mounted = useMounted();
   const lines = useCartStore((state) => state.lines);
   const coupon = useCartStore((state) => state.coupon);
@@ -31,9 +33,19 @@ export function CartPageContent() {
 
   const [code, setCode] = React.useState("");
 
-  const totals = computeTotals({ lines, coupon, shippingMethod });
+  const totals = computeTotals({
+    lines,
+    coupon,
+    shippingMethod,
+    config: {
+      freeShippingThreshold: settings.freeShipping,
+      taxRate: settings.taxRate / 100,
+      standardShipping: settings.standardShipping,
+      expressShipping: settings.expressShipping,
+    },
+  });
   const savings = computeSavings(lines);
-  const shippingProgress = Math.min(100, (totals.subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const shippingProgress = Math.min(100, (totals.subtotal / (settings.freeShipping || 1)) * 100);
 
   if (!mounted) {
     return (
@@ -193,7 +205,7 @@ export function CartPageContent() {
               <dd className="tnum text-ivory">
                 {formatNumber(totals.tax)} تومان
                 <span className="ms-1 text-[0.62rem] text-mute">
-                  ({toPersianDigits(TAX_RATE * 100)}٪)
+                  ({toPersianDigits(settings.taxRate)}٪)
                 </span>
               </dd>
             </div>

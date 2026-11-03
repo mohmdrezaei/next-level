@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/controls";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useMounted } from "@/lib/hooks/use-mounted";
+import { useStoreSettings } from "@/lib/hooks/use-store-settings";
 import { formatNumber, toPersianDigits } from "@/lib/format";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 import { CartLineItem } from "./cart-line-item";
@@ -16,6 +17,7 @@ import { useCartStore } from "../store/cart-store";
 import { computeSavings, computeTotals } from "../lib/totals";
 
 export function CartDrawer() {
+  const settings = useStoreSettings();
   const mounted = useMounted();
   const isOpen = useCartStore((state) => state.isDrawerOpen);
   const closeDrawer = useCartStore((state) => state.closeDrawer);
@@ -23,9 +25,19 @@ export function CartDrawer() {
   const coupon = useCartStore((state) => state.coupon);
   const shippingMethod = useCartStore((state) => state.shippingMethod);
 
-  const totals = computeTotals({ lines, coupon, shippingMethod });
+  const totals = computeTotals({
+    lines,
+    coupon,
+    shippingMethod,
+    config: {
+      freeShippingThreshold: settings.freeShipping,
+      taxRate: settings.taxRate / 100,
+      standardShipping: settings.standardShipping,
+      expressShipping: settings.expressShipping,
+    },
+  });
   const savings = computeSavings(lines);
-  const shippingProgress = Math.min(100, (totals.subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const shippingProgress = Math.min(100, (totals.subtotal / (settings.freeShipping || 1)) * 100);
 
   if (!mounted) return null;
 

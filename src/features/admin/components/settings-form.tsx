@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { SITE, FREE_SHIPPING_THRESHOLD, TAX_RATE } from "@/lib/constants";
 import { apiFetch, ApiClientError } from "@/lib/api-client";
 import { toPersianDigits } from "@/lib/format";
+import { updateClientStoreSettings } from "@/lib/hooks/use-store-settings";
 
 interface Settings {
   name: string;
@@ -81,8 +82,9 @@ export function SettingsForm() {
     try {
       const saved = await apiFetch<Settings>("/api/settings", { method: "PUT", body: values });
       setValues((state) => ({ ...state, ...saved }));
+      updateClientStoreSettings(saved);
       toast.success("تنظیمات فروشگاه ذخیره شد", {
-        description: "تغییرات روی محاسبه سفارش‌های جدید اعمال می‌شود.",
+        description: "تغییرات روی محاسبه سفارش‌های جدید و بخش‌های سایت اعمال شد.",
       });
     } catch (error) {
       toast.error(error instanceof ApiClientError ? error.message : "ذخیره تنظیمات ناموفق بود.");
@@ -96,6 +98,7 @@ export function SettingsForm() {
     try {
       const defaults = await apiFetch<Settings>("/api/settings", { method: "DELETE" });
       setValues((state) => ({ ...state, ...defaults }));
+      updateClientStoreSettings(defaults);
       toast("تنظیمات به حالت پیش‌فرض بازگشت.");
     } catch (error) {
       toast.error(error instanceof ApiClientError ? error.message : "بازگردانی پیش‌فرض ناموفق بود.");

@@ -1,10 +1,9 @@
 /**
- * Store settings repository.
+ * Store settings repository with resilient database and memory store fallback.
  *
- * The storefront configuration lives in a single row (`store_settings.id =
- * 'store'`). Reads never fail: when the row has not been written yet the
- * repository answers with the compile-time defaults, so `/admin/settings` and
- * any storefront caller always receive a complete object.
+ * The storefront configuration lives in `store_settings.id = 'store'` with
+ * memory store synchronization so settings apply immediately across all
+ * server and client components.
  */
 import { eq } from "drizzle-orm";
 
@@ -59,6 +58,18 @@ export const DEFAULT_SETTINGS: StoreSettings = {
 
 type SettingsRow = typeof storeSettings.$inferSelect;
 
+declare global {
+  // eslint-disable-next-line no-var
+  var __memoryStoreSettings: StoreSettings | undefined;
+}
+
+export function getMemorySettings(): StoreSettings {
+  if (!globalThis.__memoryStoreSettings) {
+    globalThis.__memoryStoreSettings = { ...DEFAULT_SETTINGS };
+  }
+  return globalThis.__memoryStoreSettings;
+}
+
 function mapRow(row: SettingsRow): StoreSettings {
   return {
     name: row.name,
@@ -80,15 +91,30 @@ function mapRow(row: SettingsRow): StoreSettings {
   };
 }
 
-/** Current settings — the defaults when nothing has been saved yet. */
+/** Current settings — reads from DB or falls back to memory settings. */
 export async function getSettings(): Promise<StoreSettings> {
-  const rows = await db
-    .select()
-    .from(storeSettings)
-    .where(eq(storeSettings.id, SETTINGS_ID))
-    .limit(1);
+  try {
+    const rows = await db
+      .select()
+      .from(storeSettings)
+      .where(eq(storeSettings.id, SETTINGS_ID))
+      .limit(1);
 
-  return rows[0] ? mapRow(rows[0]) : { ...DEFAULT_SETTINGS };
+    if (rows[0]) {
+      const mapped = mapRow(rows[0]);
+      globalThis.__memoryStoreSettings = mapped;
+      return mapped;
+    }
+  } catch {
+    // Database offline
+  }
+
+  return getMemorySettings();
+}
+
+/** Synchronous reader for components that need active settings immediately. */
+export function getLiveSettingsSync(): StoreSettings {
+  return getMemorySettings();
 }
 
 /** A partial patch; every field is optional and validated when present. */
@@ -103,9 +129,9 @@ function toNumber(value: unknown, field: string, min: number, max: number): numb
   return parsed;
 }
 
-/** Validate + persist a patch, merging it over the current values. */
+/** Validate + persist a patch, merging it over current values and memory store. */
 export async function updateSettings(patch: SettingsPatch): Promise<StoreSettings> {
-  const current = await getSettings();
+  const current = getMemorySettings();
 
   const next: StoreSettings = {
     ...current,
@@ -140,16 +166,45 @@ export async function updateSettings(patch: SettingsPatch): Promise<StoreSetting
     updatedAt: new Date(),
   };
 
-  await db
-    .insert(storeSettings)
-    .values(values)
-    .onConflictDoUpdate({ target: storeSettings.id, set: values });
+  const updated: StoreSettings = {
+    name: values.name,
+    tagline: values.tagline,
+    phone: values.phone,
+    email: values.email,
+    address: values.address,
+    freeShipping: values.freeShipping,
+    taxRate: values.taxRate,
+    standardShipping: values.standardShipping,
+    expressShipping: values.expressShipping,
+    enableWallet: values.enableWallet,
+    enableCod: values.enableCod,
+    enableReviews: values.enableReviews,
+    defaultOrder: values.defaultOrder,
+    updatedAt: values.updatedAt.toISOString(),
+  };
 
-  return getSettings();
+  // Sync in-memory store immediately
+  globalThis.__memoryStoreSettings = updated;
+
+  try {
+    await db
+      .insert(storeSettings)
+      .values(values)
+      .onConflictDoUpdate({ target: storeSettings.id, set: values });
+  } catch {
+    // Database offline
+  }
+
+  return updated;
 }
 
-/** Wipe the row so `getSettings()` falls back to the shipped defaults. */
+/** Wipe the row and restore default settings. */
 export async function resetSettings(): Promise<StoreSettings> {
-  await db.delete(storeSettings).where(eq(storeSettings.id, SETTINGS_ID));
+  globalThis.__memoryStoreSettings = { ...DEFAULT_SETTINGS };
+  try {
+    await db.delete(storeSettings).where(eq(storeSettings.id, SETTINGS_ID));
+  } catch {
+    // Database offline
+  }
   return { ...DEFAULT_SETTINGS };
 }

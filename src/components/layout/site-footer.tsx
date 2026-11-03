@@ -4,10 +4,17 @@ import { Logo } from "@/components/shared/logo";
 import { NewsletterForm } from "./newsletter-form";
 import { FOOTER_NAV, SITE, SOCIAL_LINKS } from "@/lib/constants";
 import { CATEGORIES } from "@/features/products/data/catalog";
+import { getSettings } from "@/server/repositories/settings";
 
 const SOCIAL_ICONS = [Camera, Send, Mail];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getSettings();
+  const phone = settings.phone || SITE.phone;
+  const email = settings.email || SITE.email;
+  const address = settings.address || SITE.address;
+  const phoneRaw = phone.replace(/[\s-]/g, "");
+
   return (
     <footer className="relative mt-24 border-t border-line bg-carbon/60">
       <div className="pointer-events-none absolute inset-x-0 -top-px h-px bg-[linear-gradient(90deg,transparent,rgba(200,162,76,0.35),transparent)]" />
@@ -61,23 +68,23 @@ export function SiteFooter() {
 
         <div className="mt-14 grid gap-6 border-t border-line pt-8 md:grid-cols-3">
           <a
-            href={`tel:${SITE.phoneRaw}`}
+            href={`tel:${phoneRaw}`}
             className="group flex items-start gap-3 text-xs text-smoke transition-colors duration-300 hover:text-ivory"
           >
             <Phone className="mt-0.5 size-4 shrink-0 text-gold" />
             <span className="flex flex-col gap-1">
-              <span className="tnum">{SITE.phone}</span>
+              <span className="tnum">{phone}</span>
               <span className="text-[0.68rem] text-mute">{SITE.workingHours}</span>
             </span>
           </a>
 
           <a
-            href={`mailto:${SITE.email}`}
+            href={`mailto:${email}`}
             className="group flex items-start gap-3 text-xs text-smoke transition-colors duration-300 hover:text-ivory"
           >
             <Mail className="mt-0.5 size-4 shrink-0 text-gold" />
             <span className="flex flex-col gap-1">
-              <span dir="ltr">{SITE.email}</span>
+              <span dir="ltr">{email}</span>
               <span className="text-[0.68rem] text-mute">پاسخ‌گویی حداکثر ۴ ساعت کاری</span>
             </span>
           </a>
@@ -85,7 +92,7 @@ export function SiteFooter() {
           <p className="flex items-start gap-3 text-xs text-smoke">
             <MapPin className="mt-0.5 size-4 shrink-0 text-gold" />
             <span className="flex flex-col gap-1">
-              <span>{SITE.address}</span>
+              <span>{address}</span>
             </span>
           </p>
         </div>

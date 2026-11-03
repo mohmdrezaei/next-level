@@ -14,6 +14,7 @@ import { RatingStars } from "@/components/shared/rating-stars";
 import { InitialsAvatar } from "@/components/ui/avatar";
 import { formatNumber, formatRelative, toPersianDigits } from "@/lib/format";
 import { apiFetch, ApiClientError } from "@/lib/api-client";
+import { useStoreSettings } from "@/lib/hooks/use-store-settings";
 import { cn } from "@/lib/utils";
 import type { Product, ProductReview } from "@/features/products/types";
 
@@ -23,6 +24,7 @@ interface ProductReviewsProps {
 }
 
 export function ProductReviews({ product, reviews }: ProductReviewsProps) {
+  const settings = useStoreSettings();
   const router = useRouter();
   const [showForm, setShowForm] = React.useState(false);
   const [rating, setRating] = React.useState(5);
@@ -37,6 +39,10 @@ export function ProductReviews({ product, reviews }: ProductReviewsProps) {
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!settings.enableReviews) {
+      toast.error("ثبت نظر در حال حاضر توسط مدیریت فروشگاه غیرفعال است.");
+      return;
+    }
     const data = new FormData(event.currentTarget);
     const title = String(data.get("title") ?? "").trim();
     const body = String(data.get("body") ?? "").trim();
@@ -87,16 +93,22 @@ export function ProductReviews({ product, reviews }: ProductReviewsProps) {
           <span className="text-[0.68rem] text-mute">
             بر اساس <span className="tnum">{formatNumber(product.reviewCount)}</span> نظر ثبت‌شده
           </span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setShowForm((value) => !value)}
-            className="mt-2"
-          >
-            <MessageSquarePlus className="size-3.5" />
-            نوشتن نظر
-          </Button>
+          {settings.enableReviews ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowForm((value) => !value)}
+              className="mt-2"
+            >
+              <MessageSquarePlus className="size-3.5" />
+              نوشتن نظر
+            </Button>
+          ) : (
+            <span className="mt-2 rounded-md bg-elevated px-3 py-1 text-[0.68rem] text-mute">
+              ثبت نظر موقتاً غیرفعال است
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col justify-center gap-3">

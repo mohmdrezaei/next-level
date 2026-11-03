@@ -31,6 +31,7 @@ import { validateCoupon } from "./coupons";
 import { applyOrderToCustomer } from "./customers";
 import { getProductsByIds } from "./products";
 import { getUserById } from "./users";
+import { getSettings } from "./settings";
 
 export const ORDER_STATUSES: OrderStatus[] = [
   "pending",
@@ -65,14 +66,16 @@ declare global {
 
 function getMemoryOrders(): Map<string, Order> {
   if (!globalThis.__memoryOrders) {
-    globalThis.__memoryOrders = new Map<string, Order>();
+    globalThis.__memoryOrders = new Map<string, Order>(ORDERS.map((o) => [o.id, { ...o }]));
   }
   return globalThis.__memoryOrders;
 }
 
 function getMemoryOrdersByCode(): Map<string, Order> {
   if (!globalThis.__memoryOrdersByCode) {
-    globalThis.__memoryOrdersByCode = new Map<string, Order>();
+    globalThis.__memoryOrdersByCode = new Map<string, Order>(
+      Array.from(getMemoryOrders().values()).map((o) => [o.code, o]),
+    );
   }
   return globalThis.__memoryOrdersByCode;
 }
@@ -221,6 +224,20 @@ export async function listOrders(query: OrderQuery = {}): Promise<Order[]> {
   for (const o of getMemoryOrders().values()) {
     if (query.status && o.status !== query.status) continue;
     if (query.customerId && o.customerId !== query.customerId) continue;
+    if (query.q?.trim()) {
+      const needle = query.q.trim().toLowerCase();
+      const haystack = [
+        o.code,
+        o.customerName,
+        o.customerPhone,
+        o.customerEmail,
+        o.address.city,
+        o.address.province,
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!haystack.includes(needle)) continue;
+    }
     seenCodes.add(o.code);
     results.push(o);
   }
@@ -247,17 +264,9 @@ export async function listOrders(query: OrderQuery = {}): Promise<Order[]> {
     // DB offline
   }
 
-  // 3. Fallback demo orders for broad queries
-  if (results.length === 0 && !query.customerId) {
-    for (const d of ORDERS) {
-      if (!seenCodes.has(d.code)) {
-        seenCodes.add(d.code);
-        results.push(d);
-      }
-    }
-  }
-
-  return results.slice(0, query.limit ?? 100);
+  return results
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    .slice(query.offset ?? 0, (query.offset ?? 0) + (query.limit ?? 100));
 }
 
 export async function countOrders(query: OrderQuery = {}): Promise<number> {
@@ -520,9 +529,16 @@ export async function priceCart(input: {
     couponLabel = coupon.label;
   }
 
-  const payable = subtotal - discount;
-  const shipping = freeShipping || payable >= FREE_SHIPPING_THRESHOLD ? 0 : method.price;
-  const tax = Math.round(payable * TAX_RATE);
+  const settings = await getSettings();
+  const standardPrice = settings.standardShipping ?? 149_000;
+  const expressPrice = settings.expressShipping ?? 349_000;
+  const freeThreshold = settings.freeShipping ?? FREE_SHIPPING_THRESHOLD;
+  const taxRate = (settings.taxRate ?? 9) / 100;
+
+  const payable = Math.max(0, subtotal - discount);
+  const methodPrice = shippingMethodId === "express" ? expressPrice : standardPrice;
+  const shipping = freeShipping || payable >= freeThreshold ? 0 : methodPrice;
+  const tax = Math.round(payable * taxRate);
 
   return {
     items,
@@ -545,6 +561,8 @@ export async function createOrder(input: OrderInput): Promise<Order> {
     throw badRequest("نام گیرنده و نشانی سفارش الزامی است.", { field: "address" });
   }
 
+  const settings = await getSettings();
+
   const priced = await priceCart({
     items: input.items,
     shippingMethod: input.shippingMethod,
@@ -555,6 +573,10 @@ export async function createOrder(input: OrderInput): Promise<Order> {
     input.paymentMethod && PAYMENT_METHODS.some((method) => method.id === input.paymentMethod)
       ? input.paymentMethod
       : "gateway";
+
+  if (paymentMethod === "cod" && !settings.enableCod) {
+    throw badRequest("پرداخت در محل در حال حاضر غیرفعال است.", { field: "paymentMethod" });
+  }
 
   const status: OrderStatus = input.status && ORDER_STATUSES.includes(input.status) ? input.status : "pending";
 

@@ -27,6 +27,7 @@ import { CartLineItem } from "@/features/cart/components/cart-line-item";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { computeTotals } from "@/features/cart/lib/totals";
 import { useMounted } from "@/lib/hooks/use-mounted";
+import { useStoreSettings } from "@/lib/hooks/use-store-settings";
 import { formatNumber, toPersianDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
@@ -77,6 +78,7 @@ interface AddressForm {
 type Errors = Partial<Record<keyof AddressForm, string>>;
 
 export function CheckoutFlow() {
+  const settings = useStoreSettings();
   const mounted = useMounted();
   const lines = useCartStore((state) => state.lines);
   const coupon = useCartStore((state) => state.coupon);
@@ -90,6 +92,15 @@ export function CheckoutFlow() {
   const [placedCode, setPlacedCode] = React.useState<string | null>(null);
   const [placedTotal, setPlacedTotal] = React.useState(0);
   const [submitting, setSubmitting] = React.useState(false);
+
+  // Sync payment method with dynamic store settings
+  React.useEffect(() => {
+    if (payment === "cod" && !settings.enableCod) {
+      setPayment("gateway");
+    } else if (payment === "wallet" && !settings.enableWallet) {
+      setPayment("gateway");
+    }
+  }, [settings.enableCod, settings.enableWallet, payment]);
 
   const [savedAddresses, setSavedAddresses] = React.useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = React.useState<string | null>(null);
@@ -143,7 +154,49 @@ export function CheckoutFlow() {
     };
   }, []);
 
-  const totals = computeTotals({ lines, coupon, shippingMethod });
+  const totals = computeTotals({
+    lines,
+    coupon,
+    shippingMethod,
+    config: {
+      freeShippingThreshold: settings.freeShipping,
+      taxRate: settings.taxRate / 100,
+      standardShipping: settings.standardShipping,
+      expressShipping: settings.expressShipping,
+    },
+  });
+
+  const availableShippingMethods = React.useMemo(() => [
+    {
+      id: "standard" as const,
+      title: "ارسال استاندارد",
+      description: "تحویل ۳ تا ۵ روز کاری در سراسر ایران",
+      price: settings.standardShipping,
+      estimate: "۳ تا ۵ روز کاری",
+    },
+    {
+      id: "express" as const,
+      title: "ارسال سریع",
+      description: "تحویل ۲۴ ساعته در تهران و کرج",
+      price: settings.expressShipping,
+      estimate: "۲۴ ساعته",
+    },
+    {
+      id: "pickup" as const,
+      title: "تحویل حضوری در بوتیک",
+      description: "دریافت از بوتیک پس از تأیید آماده‌سازی",
+      price: 0,
+      estimate: "همان روز",
+    },
+  ], [settings.standardShipping, settings.expressShipping]);
+
+  const availablePaymentMethods = React.useMemo(() => {
+    return PAYMENT_METHODS.filter((m) => {
+      if (m.id === "cod" && !settings.enableCod) return false;
+      if (m.id === "wallet" && !settings.enableWallet) return false;
+      return true;
+    });
+  }, [settings.enableCod, settings.enableWallet]);
 
   const setField = (key: keyof AddressForm, value: string) => {
     setForm((state) => ({ ...state, [key]: value }));
@@ -423,7 +476,7 @@ export function CheckoutFlow() {
                     onValueChange={(value) => setShippingMethod(value as ShippingMethodId)}
                     className="gap-3"
                   >
-                    {SHIPPING_METHODS.map((method) => (
+                    {availableShippingMethods.map((method) => (
                       <label
                         key={method.id}
                         className={cn(
@@ -439,7 +492,7 @@ export function CheckoutFlow() {
                           <span className="text-[0.65rem] text-mute">{method.description}</span>
                         </span>
                         <span className="tnum text-xs text-ivory">
-                          {method.price === 0 ? (
+                          {method.price === 0 || totals.qualifiesForFreeShipping ? (
                             <Badge tone="success">رایگان</Badge>
                           ) : (
                             `${formatNumber(method.price)} تومان`
@@ -457,7 +510,7 @@ export function CheckoutFlow() {
                     onValueChange={(value) => setPayment(value as PaymentMethodId)}
                     className="gap-3"
                   >
-                    {PAYMENT_METHODS.map((method) => {
+                    {availablePaymentMethods.map((method) => {
                       const Icon = PAYMENT_ICONS[method.id];
                       return (
                         <label
@@ -520,11 +573,11 @@ export function CheckoutFlow() {
                   <div className="flex flex-col gap-2.5 text-xs text-smoke">
                     <span className="flex items-center gap-2.5">
                       <Truck className="size-4 text-gold" />
-                      {SHIPPING_METHODS.find((item) => item.id === shippingMethod)?.title}
+                      {availableShippingMethods.find((item) => item.id === shippingMethod)?.title}
                     </span>
                     <span className="flex items-center gap-2.5">
                       {React.createElement(PAYMENT_ICONS[payment], { className: "size-4 text-gold" })}
-                      {PAYMENT_METHODS.find((item) => item.id === payment)?.title}
+                      {availablePaymentMethods.find((item) => item.id === payment)?.title ?? "پرداخت آنلاین"}
                     </span>
                   </div>
                 </div>
@@ -602,7 +655,7 @@ export function CheckoutFlow() {
               </div>
             ) : null}
             <div className="flex items-center justify-between">
-              <dt className="text-mute">مالیات ({toPersianDigits(TAX_RATE * 100)}٪)</dt>
+              <dt className="text-mute">مالیات ({toPersianDigits(settings.taxRate)}٪)</dt>
               <dd className="tnum text-ivory">{formatNumber(totals.tax)} تومان</dd>
             </div>
             <div className="flex items-center justify-between">

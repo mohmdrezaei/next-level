@@ -17,6 +17,7 @@ import { ActiveFilters } from "@/features/products/components/active-filters";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { Pagination } from "@/components/shared/pagination";
 import { formatNumber } from "@/lib/format";
+import { getSettings } from "@/server/repositories/settings";
 
 export const metadata: Metadata = {
   title: "فروشگاه",
@@ -26,8 +27,9 @@ export const metadata: Metadata = {
 
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   const params = await searchParams;
+  const settings = await getSettings();
   const products = await allProducts();
-  const filters = readFilters(params);
+  const filters = readFilters(params, settings.defaultOrder);
   const facets = buildFacets(products);
   const results = applyFilters(products, filters);
 

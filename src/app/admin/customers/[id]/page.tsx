@@ -40,7 +40,12 @@ export default async function AdminCustomerPage({
   if (!customer) notFound();
 
   const own = orders
-    .filter((order) => order.customerId === customer.id)
+    .filter(
+      (order) =>
+        order.customerId === customer.id ||
+        (Boolean(customer.phone) && order.customerPhone === customer.phone) ||
+        (Boolean(customer.name) && order.customerName === customer.name),
+    )
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 
   const recent = own[0];

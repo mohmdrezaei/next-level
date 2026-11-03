@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { ContactForm } from "@/features/contact/components/contact-form";
 import { Card } from "@/components/ui/card";
 import { SITE, SOCIAL_LINKS } from "@/lib/constants";
+import { getSettings } from "@/server/repositories/settings";
 
 export const metadata: Metadata = {
   title: "تماس با ما",
@@ -13,37 +14,43 @@ export const metadata: Metadata = {
     "راه‌های تماس با بوتیک Next Level: تلفن، ایمیل، نشانی بوتیک و فرم پیام آنلاین برای پشتیبانی و مشاوره خرید.",
 };
 
-const CHANNELS = [
-  {
-    icon: Phone,
-    title: "تلفن بوتیک",
-    value: SITE.phone,
-    hint: SITE.workingHours,
-    href: `tel:${SITE.phoneRaw}`,
-  },
-  {
-    icon: Mail,
-    title: "ایمیل پشتیبانی",
-    value: SITE.email,
-    hint: "پاسخ حداکثر تا ۴ ساعت کاری",
-    href: `mailto:${SITE.email}`,
-    latin: true,
-  },
-  {
-    icon: MapPin,
-    title: "نشانی بوتیک",
-    value: SITE.address,
-    hint: "امکان پرو حضوری و اصلاح دوخت",
-  },
-  {
-    icon: Clock,
-    title: "ساعات کاری",
-    value: SITE.workingHours,
-    hint: "جمعه‌ها تعطیل — پاسخگویی آنلاین فعال",
-  },
-];
+export default async function ContactPage() {
+  const settings = await getSettings();
+  const phone = settings.phone || SITE.phone;
+  const email = settings.email || SITE.email;
+  const address = settings.address || SITE.address;
+  const phoneRaw = phone.replace(/[\s-]/g, "");
 
-export default function ContactPage() {
+  const channels = [
+    {
+      icon: Phone,
+      title: "تلفن بوتیک",
+      value: phone,
+      hint: SITE.workingHours,
+      href: `tel:${phoneRaw}`,
+    },
+    {
+      icon: Mail,
+      title: "ایمیل پشتیبانی",
+      value: email,
+      hint: "پاسخ حداکثر تا ۴ ساعت کاری",
+      href: `mailto:${email}`,
+      latin: true,
+    },
+    {
+      icon: MapPin,
+      title: "نشانی بوتیک",
+      value: address,
+      hint: "امکان پرو حضوری و اصلاح دوخت",
+    },
+    {
+      icon: Clock,
+      title: "ساعات کاری",
+      value: SITE.workingHours,
+      hint: "جمعه‌ها تعطیل — پاسخگویی آنلاین فعال",
+    },
+  ];
+
   return (
     <div className="container-page py-10 lg:py-14">
       <Breadcrumbs items={[{ title: "تماس با ما" }]} className="mb-8" />
@@ -64,7 +71,7 @@ export default function ContactPage() {
 
       <div className="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-14">
         <div className="flex flex-col gap-5">
-          {CHANNELS.map((channel, index) => (
+          {channels.map((channel, index) => (
             <Reveal key={channel.title} delay={index * 0.06}>
               <Card className="group flex gap-4 p-5 transition-colors duration-500 hover:border-gold/25">
                 <span className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-elevated text-gold transition-transform duration-500 group-hover:scale-105">

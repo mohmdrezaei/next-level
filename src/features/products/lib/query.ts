@@ -136,8 +136,16 @@ const asArray = (value: string | string[] | undefined): string[] => {
 };
 
 /** Read ProductFilters out of a Next.js `searchParams` object. */
-export function readFilters(searchParams: SearchParamsLike): ProductFilters {
+export function readFilters(
+  searchParams: SearchParamsLike,
+  defaultSort?: SortKey,
+): ProductFilters {
   const defaults = createDefaultFilters();
+  const fallbackSort =
+    defaultSort && SORT_OPTIONS.some((option) => option.value === defaultSort)
+      ? defaultSort
+      : defaults.sort;
+
   const num = (value: string | string[] | undefined, fallback: number) => {
     const raw = Array.isArray(value) ? value[0] : value;
     const parsed = Number(raw);
@@ -147,7 +155,7 @@ export function readFilters(searchParams: SearchParamsLike): ProductFilters {
   const sortRaw = (Array.isArray(searchParams.sort) ? searchParams.sort[0] : searchParams.sort) ?? "";
   const sort = SORT_OPTIONS.some((option) => option.value === sortRaw)
     ? (sortRaw as SortKey)
-    : defaults.sort;
+    : fallbackSort;
 
   return {
     q: (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q) ?? "",

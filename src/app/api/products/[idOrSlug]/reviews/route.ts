@@ -1,10 +1,11 @@
 import type { NextRequest } from "next/server";
 
 import { requireApiUser } from "@/server/api-auth";
-import { notFound, ok, paginationMeta, readPagination, withApi } from "@/server/http";
+import { badRequest, notFound, ok, paginationMeta, readPagination, withApi } from "@/server/http";
 import { hasPurchasedProduct } from "@/server/repositories/orders";
 import { findProduct } from "@/server/repositories/products";
 import { createReview, getRatingSummary, listReviews } from "@/server/repositories/reviews";
+import { getSettings } from "@/server/repositories/settings";
 import { ensureCustomerForUser } from "@/server/repositories/users";
 import { int, parseBody, strOptional } from "@/server/validate";
 
@@ -42,6 +43,11 @@ export async function GET(request: NextRequest, { params }: Context) {
 /** POST /api/products/:idOrSlug/reviews — post a review (signed-in shoppers). */
 export async function POST(request: NextRequest, { params }: Context) {
   return withApi(async () => {
+    const settings = await getSettings();
+    if (!settings.enableReviews) {
+      throw badRequest("ثبت نظر در حال حاضر توسط مدیریت فروشگاه غیرفعال شده است.");
+    }
+
     const user = await requireApiUser();
     const { idOrSlug } = await params;
 
