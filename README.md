@@ -1,36 +1,195 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next Level — NEXT LEVEL
 
-## Getting Started
+فروشگاه آنلاین بوتیک پوشاک مردانه، ساخته‌شده با **Next.js 16 (App Router)**، **TypeScript**،
+**Tailwind CSS v4**، **Radix UI** و **Motion**.
 
-First, run the development server:
+رابط کاربری کاملاً فارسی و راست‌به‌چپ (RTL) است، با تم تیره و زبان طراحی ادیتوریال.
+
+---
+
+## امکانات
+
+### فروشگاه (سمت مشتری)
+
+| مسیر | توضیح |
+| --- | --- |
+| `/` | صفحه اصلی: هیرو انیمیشنی، نوار مزیت‌ها، ویترین محصولات با تب، کالکشن‌ها، بخش ادیتوریال، دسته‌بندی‌ها، نظرات، دعوت به خرید |
+| `/shop` | فروشگاه با فیلتر (دسته‌بندی، سایز، رنگ، محدوده قیمت، تخفیف‌دار، موجود)، مرتب‌سازی، جست‌وجو، صفحه‌بندی — همه در URL |
+| `/shop/[slug]` | جزئیات محصول: گالری با بزرگ‌نمایی، انتخاب رنگ/سایز/تعداد، افزودن به سبد، خرید فوری، علاقه‌مندی، تب‌های مشخصات، نظرات و قطعات مرتبط |
+| `/collections` و `/collections/[slug]` | کالکشن‌های فصلی |
+| `/cart` | سبد خرید کامل با کد تخفیف، پیشرفت ارسال رایگان و خلاصه سفارش |
+| `/checkout` | پرداخت سه‌مرحله‌ای (گیرنده → ارسال/پرداخت → بازبینی) با اعتبارسنجی و صفحه موفقیت |
+| `/wishlist` | علاقه‌مندی‌ها |
+| `/about` | داستان آتلیه، راهنمای سایز، ارسال، بازگشت، سوالات متداول |
+| `/contact` | راه‌های تماس و فرم پیام |
+| `/login` `/register` `/forgot-password` | احراز هویت |
+
+### پنل کاربری `/account`
+
+داشبورد، سفارش‌های من (فیلتر وضعیت + جست‌وجو)، جزئیات سفارش با تایم‌لاین، نشانی‌ها (CRUD در دیالوگ)،
+اطلاعات حساب و تغییر رمز، علاقه‌مندی‌ها.
+
+### پنل مدیریت `/admin`
+
+داشبورد (KPI، نمودار درآمد SVG، پرفروش‌ترین‌ها، هشدار موجودی، آخرین سفارش‌ها، سهم دسته‌بندی‌ها)،
+محصولات (جدول با جست‌وجو/فیلتر/مرتب‌سازی، انتخاب گروهی، کپی/حذف با تأیید)، ایجاد و ویرایش محصول با
+پیش‌نمایش زنده، سفارش‌ها و تغییر وضعیت، مشتریان با کشوی جزئیات، کالکشن‌ها، تنظیمات فروشگاه.
+
+---
+
+## راه‌اندازی
+
+نیازمندی: **Node.js 20+** و **pnpm 10+**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install      # نصب وابستگی‌ها
+pnpm dev          # اجرای سرور توسعه روی http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+اسکریپت‌های دیگر:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm build        # بیلد تولیدی
+pnpm start        # اجرای بیلد تولیدی
+pnpm lint         # بررسی ESLint
+pnpm typecheck    # بررسی نوع‌ها با tsc
+node scripts/generate-art.mjs   # بازتولید تصاویر SVG (در صورت تغییر کاتالوگ)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### حساب‌های آزمایشی
 
-## Learn More
+| نقش | شناسه | رمز |
+| --- | --- | --- |
+| مشتری | `09120000000` | `nextlevel1234` |
+| مدیر | `admin@nextlevel.test` | `nextlevel1234` |
 
-To learn more about Next.js, take a look at the following resources:
+ورود با ایمیل مدیر به‌صورت خودکار به `/admin` هدایت می‌شود. مسیرهای `/admin` و `/account` توسط
+`src/proxy.ts` (جایگزین `middleware.ts` در Next 16) و همچنین در لایه layout محافظت می‌شوند.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### کدهای تخفیف فعال
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`NEXT10` (۱۰٪)، `WELCOME15` (۱۵٪ برای سبد بالای ۸ میلیون)، `FREESHIP` (ارسال رایگان)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ساختار پروژه (Feature-based)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├─ app/                       # مسیرها (App Router)
+│  ├─ (shop)/                 # گروه مسیر فروشگاه + layout با هدر و فوتر
+│  ├─ (auth)/                 # گروه مسیر احراز هویت با layout اختصاصی
+│  ├─ account/                # پنل کاربری
+│  ├─ admin/                  # پنل مدیریت
+│  ├─ layout.tsx              # ریشه: فونت، متادیتا، Providerها
+│  └─ globals.css             # سیستم طراحی (توکن‌ها، کی‌فریم‌ها، یوتیلیتی‌ها)
+│
+├─ features/                  # هر قابلیت مستقل با اجزا، داده و منطق خودش
+│  ├─ products/               # کاتالوگ، فیلتر/مرتب‌سازی، کارت و گالری محصول
+│  ├─ cart/                   # استور Zustand، محاسبه جمع‌ها، سبد خرید و drawer
+│  ├─ wishlist/               # استور و اجزای علاقه‌مندی
+│  ├─ checkout/               # جریان پرداخت چندمرحله‌ای
+│  ├─ orders/                 # مدل سفارش، مشتری، وضعیت‌ها و تایم‌لاین
+│  ├─ reviews/                # نظرات محصول
+│  ├─ auth/                   # نشست، اکشن‌های سرور، فرم‌های ورود و ثبت‌نام
+│  ├─ account/                # اجزای پنل کاربری
+│  ├─ admin/                  # اجزای پنل مدیریت، متریک‌ها و اکشن‌ها
+│  ├─ home/                   # بخش‌های صفحه اصلی
+│  ├─ search/                 # دیالوگ جست‌وجو
+│  └─ contact/                # فرم تماس
+│
+├─ components/
+│  ├─ ui/                     # کامپوننت‌های پایه Radix با استایل اختصاصی
+│  ├─ layout/                 # هدر، فوتر، شل فروشگاه، ناوبری موبایل
+│  └─ shared/                 # اجزای مشترک (قیمت، امتیاز، Reveal، مارکی، …)
+│
+├─ lib/                       # ابزارها، قالب‌بندی فارسی، ثابت‌ها، هوک‌ها
+├─ providers/                 # Providerهای سراسری
+├─ assets/fonts/              # فونت Vazirmatn (خودمیزبان)
+└─ proxy.ts                   # محافظت از مسیرهای خصوصی
+```
+
+قواعد مسیردهی و نام‌گذاری:
+
+- هر قابلیت فقط از طریق `index.ts` خودش در دسترس قرار می‌گیرد.
+- داده‌های نمونه در `features/*/data`، منطق خالص در `features/*/lib` و ست‌های کلاینتی در
+  `features/*/store` قرار دارند.
+- اجزای سرور و کلاینت جدا هستند؛ `"use client"` فقط جایی که لازم است.
+
+---
+
+## سیستم طراحی
+
+توکن‌ها در `src/app/globals.css` با دستور `@theme` تعریف شده‌اند:
+
+- **رنگ‌ها**: `ink` / `carbon` / `surface` / `elevated` / `line`، متن `ivory` / `smoke` / `mute`،
+  تأکیدی `gold` / `gold-soft` / `copper`، وضعیت‌ها `success` / `warning` / `danger` / `info`
+- **یوتیلیتی‌های سفارشی**: `container-page`، `glass`، `hairline`، `gold-text`، `gold-surface`،
+  `overlay-scrim`، `tnum` (اعداد هم‌عرض)، `mask-fade-*`
+- **انیمیشن‌ها**: `animate-fade-up`، `animate-aurora`، `animate-marquee`، `animate-shimmer` و
+  یوتیلیتی‌های ورود/خروج Radix مانند `radix-pop` و `radix-sheet-*`
+- **حرکت**: تمام انیمیشن‌ها با `useReducedMotion` سازگارند
+
+### کامپوننت‌های پایه Radix
+
+همه از طریق `radix-ui` (پکیج یکپارچه) و با یک نقطه ورود مشترک
+(`src/components/ui/radix.ts`) استفاده می‌شوند: Dialog، Sheet، DropdownMenu، Select، Tabs،
+Accordion، Slider، Checkbox، RadioGroup، Switch، Tooltip، Popover، HoverCard، ScrollArea،
+Avatar، Progress، Separator، ToggleGroup، Collapsible و Label.
+
+> کامپوننت‌های Checkbox / Switch / RadioGroup / Slider / Progress / ToggleGroup در
+> `components/ui/controls.tsx` و Select در `components/ui/select.tsx` قرار دارند.
+
+---
+
+## تصاویر
+
+تمام تصاویر محصول و هنر بصری به‌صورت **SVG محلی** تولید می‌شوند؛ بدون وابستگی به سرویس بیرونی و
+بدون نیاز به اینترنت.
+
+- `public/products/{slug}-{1..3}.svg` — سه نمای هر محصول
+- `public/art/*.svg` — هیرو، کاور کالکشن‌ها، دسته‌بندی‌ها و پس‌زمینه احراز هویت
+- تولیدکننده: `scripts/generate-art.mjs` (کاتالوگ را می‌خواند و بر پایه رنگ اصلی هر محصول
+  تصاویر را می‌سازد)
+
+برای جایگزینی با عکس واقعی، کافی است مسیر `images` را در
+`src/features/products/data/catalog.ts` تغییر دهید.
+
+### رنگ تصاویر در حالت روشن
+
+آثار تولیدشده یک ترکیب تیره هستند، بنابراین در حالت روشن معکوس می‌شوند تا داخل سطوح روشن
+بنشینند. این معکوس‌سازی **اختیاری (opt-in)** است:
+
+- `media-invertible` → آثار تولیدشده (`/products/`, `/collections/`, `/art/`)، در حالت روشن
+  معکوس می‌شوند.
+- `media-natural` → عکس واقعی (بارگذاری مدیر به‌صورت data URL، نشانی بیرونی، آواتار)، همیشه
+  رنگ واقعی خود را نگه می‌دارد.
+
+کلاس مناسب با `mediaClassFor(src)` از `src/lib/media.ts` تعیین می‌شود. اگر تصویر محصولی را
+خارج از `ProductArt` رندر می‌کنید، همین کلاس را دستی اضافه کنید؛ در غیر این صورت عکس بارگذاری‌شده
+در حالت روشن رنگش عوض می‌شود.
+
+---
+
+## لایه داده
+
+این پروژه یک نمونه کامل و قابل اجراست و به پایگاه داده واقعی متصل نیست:
+
+- **کاتالوگ** (`features/products/data/catalog.ts`): ۲۰ محصول، ۷ دسته‌بندی، ۵ کالکشن
+- **سفارش‌ها و مشتریان** (`features/orders/data/orders.ts`): ۳۴ سفارش و ۱۴ مشتری که به‌صورت
+  قطعی (deterministic) تولید می‌شوند تا رندر سرور و کلاینت یکسان بماند
+- **سبد خرید و علاقه‌مندی**: Zustand با `persist` روی `localStorage`
+- **پنل مدیریت**: اکشن‌های سرور روی یک استور درون‌حافظه‌ای (روی `globalThis`) که از کاتالوگ
+  مقدار اولیه می‌گیرد و پس از هر تغییر `revalidatePath` را صدا می‌زند
+
+برای اتصال به دیتابیس واقعی، فقط بدنه توابع در `features/*/data` و
+`features/admin/actions.ts` را جایگزین کنید؛ لایه نمایش تغییری لازم ندارد.
+
+---
+
+## دسترس‌پذیری و RTL
+
+- `dir="rtl"` و `lang="fa"` روی `<html>`، استفاده از ویژگی‌های منطقی Tailwind (`ps-*`, `pe-*`, `ms-*`, `me-*`)
+- اعداد با ارقام فارسی و `font-variant-numeric: tabular-nums`
+- برچسب‌های `aria-*` روی دکمه‌های آیکونی، `aria-current` روی ناوبری، `aria-live` روی شمارنده تعداد
+- حالت `prefers-reduced-motion` برای همه انیمیشن‌ها

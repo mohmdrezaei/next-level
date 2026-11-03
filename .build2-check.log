@@ -1,0 +1,14 @@
+▲ Next.js 16.3.6 (Turbopack)
+- Environments: .env
+✓ Running next.config.ts took 136ms
+- Experiments (use with caution):
+  · optimizePackageImports
+
+  Creating an optimized production build ...
+
+> Build error occurred
+[Error: Failed to open database
+
+Caused by:
+    0: Creating and initializing persistence directory failed
+    1: failed to rename file from \\?\D:\project\next-level\.build2\cache\turbopack\v16.3.6-a758ffcf\CURRENT.next to \\?\D:\project\next-level\.build2\cache\turbopack\v16.3.6-a758ffcf\CURRENT: Access is denied. (os error 5)]

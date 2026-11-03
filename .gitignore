@@ -17,12 +17,32 @@
 /.next/
 /out/
 
+# alternate Next build-output dirs.
+#
+# `.build` is a symlink to a scratch dir OUTSIDE the project root, used when the
+# sandbox cannot delete `.next` (see `.build-check.log`). Turbopack refuses to
+# depend on paths outside the root, and Tailwind's automatic source detection
+# follows `.gitignore` — so these MUST stay listed here or `next dev` fails with
+# "Cannot depend on path ... outside of root directory".
+/.build/
+/.next-live/
+/.next-verify/
+/.rt_root/
+
 # production
 /build
 
 # misc
 .DS_Store
 *.pem
+
+# local install logs
+install.out.log
+install.err.log
+.pnpm-install.out.log
+.pnpm-install.err.log
+pnpm-install.out.log
+pnpm-install.err.log
 
 # debug
 npm-debug.log*

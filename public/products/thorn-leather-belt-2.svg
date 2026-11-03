@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img">
+  <defs>
+    <linearGradient id="bgg12567" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#110d0a" />
+      <stop offset="46%" stop-color="#1e1712" />
+      <stop offset="100%" stop-color="#2f2518" />
+    </linearGradient>
+    <radialGradient id="glowg12567" cx="68%" cy="26%" r="62%">
+      <stop offset="0%" stop-color="#8a6c36" stop-opacity="0.3" />
+      <stop offset="55%" stop-color="#8a6c36" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#8a6c36" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="vigg12567" cx="50%" cy="48%" r="76%">
+      <stop offset="55%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
+    </radialGradient>
+    
+  <filter id="grg12567">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+    <feColorMatrix type="saturate" values="0" />
+  </filter>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#bgg12567)" />
+  <rect x="-10%" y="125" width="120%" height="15" fill="#3d3733" opacity="0.062" /><rect x="-10%" y="295" width="120%" height="14" fill="#3d3733" opacity="0.042" /><rect x="-10%" y="459" width="120%" height="16" fill="#3d3733" opacity="0.071" /><rect x="-10%" y="617" width="120%" height="20" fill="#3d3733" opacity="0.041" /><rect x="-10%" y="780" width="120%" height="21" fill="#3d3733" opacity="0.039" />
+  <rect width="800" height="1000" fill="url(#glowg12567)" />
+
+  <g transform="translate(272.9, 364.8) scale(1.2710)"
+     color="#a68f66" opacity="0.6">
+    <path d="M46,96 L154,96 L166,222 L34,222 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"  /><path d="M76,96 Q100,42 124,96" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"  /><path d="M46,142 L154,142" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"  /><circle cx="100" cy="168" r="5" fill="none" stroke="currentColor" stroke-width="2.4"  />
+  </g>
+
+  <rect width="800" height="1000" fill="url(#vigg12567)" />
+  <rect width="800" height="1000" filter="url(#grg12567)" opacity="0.16" style="mix-blend-mode:overlay" />
+
+  <g opacity="0.5">
+    <rect x="48" y="882" width="128" height="1.5" fill="#8a6c36" />
+    <text x="48" y="914" font-family="Vazirmatn, system-ui, sans-serif" font-size="20.8" letter-spacing="9.6" fill="#b39f7c" direction="ltr">NOIR</text>
+    
+  </g>
+</svg>

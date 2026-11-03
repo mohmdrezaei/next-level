@@ -1,0 +1,18 @@
+
+> next-level-atelier@1.0.0 dev
+> next dev
+
+⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+▲ Next.js 16.3.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.103:3001
+✓ Ready in 1311ms
+✓ Running next.config.ts took 147ms
+Error: An IO error occurred while attempting to create and acquire the lockfile
+    at ignore-listed frames {
+  [cause]: Error: Access is denied. (os error 5)
+      at ignore-listed frames {
+    code: 'GenericFailure'
+  }
+}
+[?25h

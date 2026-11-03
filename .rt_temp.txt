@@ -1,0 +1,32 @@
+
+   MB Name                                    
+   -- ----                                    
+  510 node_modules                            
+506.4 workbuddy-update-x64                    
+ 98.5 DiagOutputDir                           
+   80 Diagnostics                             
+ 52.8 nl-deps                                 
+ 39.3 node-compile-cache                      
+   36 95BF19DE-886E-4A38-A923-55BBF4896915    
+ 14.8 8a3632b2-9a01-4e4f-90eb-b1de0a7efd65.tmp
+  6.7 55df451c-530d-44fa-ba90-44a46f959371.tmp
+  6.5 7603844b-bad7-4894-8250-2f3ab8f45de4.tmp
+  3.7 iu-14D2N.tmp                            
+  3.7 c5d26eb2-efe0-4738-8fe2-9bd4c4566874.tmp
+  3.5 b61e0c5f-83a3-4518-8bbc-2ed8b994693b.tmp
+  2.2 nl-build                                
+  1.7 2d425e72-730d-47d1-9e9f-f55739d94774.tmp
+  1.5 _iu14D2N.tmp                            
+    1 cbe55a98-a911-4246-a043-93d1b1c72986.tmp
+  0.8 tsx-admin                               
+  0.5 workbuddy-product-spill-Mr6iP5          
+  0.5 workbuddy-product-spill-OJ9oXg          
+  0.5 workbuddy-product-spill-JqamhV          
+  0.5 workbuddy-product-spill-MG8c1N          
+  0.5 workbuddy-product-spill-YbLVUj          
+  0.5 14aa3d08-cec1-4be9-9ca0-3d374e0da079.tmp
+  0.5 workbuddy-product-spill-s4HnYQ          
+
+
+
+TOTAL Temp MB = 1389.3

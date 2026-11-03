@@ -1,26 +1,473 @@
 @import "tailwindcss";
 
+/* ============================================================================
+   NEXT LEVEL — Design System
+   An editorial design language for a premium menswear boutique.
+
+   Note: the raw custom properties below are still namespaced `--noir-*` for
+   historical reasons. They are internal token names only — the public brand is
+   Next Level, and every user-facing string comes from `SITE` in
+   `src/lib/constants.ts`.
+
+   Theming
+   -------
+   Raw colours live in `:root` (dark, the default) and are re-declared under
+   `html.light`. Tailwind utilities are generated against those raw variables
+   via `@theme inline`, so a single class swap on <html> retints the whole app
+   without a rebuild and without duplicating a single component.
+
+   Token names describe *roles*, not literal pigments:
+     ink      → page background          ivory  → primary foreground
+     carbon   → alt bands / media beds    smoke  → secondary text
+     surface  → cards                     mute   → tertiary text
+     elevated → inputs, raised chips      line   → hairline borders
+   ========================================================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---- Dark (default) --------------------------------------------------- */
+  --noir-ink: #0b0b0d;
+  --noir-carbon: #101014;
+  --noir-surface: #15151a;
+  --noir-elevated: #1c1c23;
+  --noir-line: #26262e;
+
+  --noir-ivory: #f6f3ee;
+  --noir-smoke: #a7a29b;
+  --noir-mute: #6e6a64;
+
+  --noir-gold: #c8a24c;
+  --noir-gold-soft: #e6ce8c;
+  --noir-copper: #a9713b;
+  --noir-ongold: #17130a;
+
+  --noir-success: #6fae7f;
+  --noir-warning: #d8a24a;
+  --noir-danger: #e0645c;
+  --noir-info: #6c9bd1;
+
+  /* Media overlays stay dark in both themes so imagery never washes out. */
+  --noir-scrim: 9 9 11;
+  --noir-veil: 11 11 13;
+
+  --noir-shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --noir-shadow-lift: 0 24px 60px -28px rgb(0 0 0 / 0.85);
+  --noir-shadow-glow: 0 0 0 1px rgb(200 162 76 / 0.25), 0 18px 60px -24px rgb(200 162 76 / 0.35);
+
+  color-scheme: dark;
+}
+
+html.light {
+  /* ---- Light (clean neutral — deliberately not cream/beige) ------------- */
+  /* The page sits on a soft grey so that the translucent white card surfaces
+     used across the app read as actual cards instead of blending into it. */
+  --noir-ink: #f0f0f2;
+  --noir-carbon: #e7e7ec;
+  --noir-surface: #ffffff;
+  --noir-elevated: #f6f6f8;
+  --noir-line: #dbdbe1;
+
+  --noir-ivory: #0b0b0d;
+  --noir-smoke: #51515a;
+  --noir-mute: #8a8a93;
+
+  --noir-gold: #8d6c1a;
+  --noir-gold-soft: #6f5310;
+  --noir-copper: #93602a;
+  --noir-ongold: #14100a;
+
+  --noir-success: #2f6f4a;
+  --noir-warning: #8a5f14;
+  --noir-danger: #b03a33;
+  --noir-info: #35618f;
+
+  /* Imagery is inverted for light mode, so the media scrim flips with it. */
+  --noir-scrim: 246 246 248;
+  --noir-veil: 250 250 251;
+
+  --noir-shadow-soft: 0 1px 2px rgb(9 9 11 / 0.05), 0 10px 30px -16px rgb(9 9 11 / 0.16);
+  --noir-shadow-lift: 0 24px 60px -30px rgb(9 9 11 / 0.26);
+  --noir-shadow-glow: 0 0 0 1px rgb(141 108 26 / 0.18), 0 18px 60px -26px rgb(141 108 26 / 0.3);
+
+  color-scheme: light;
+}
+
+@theme {
+  /* ---- Radii ------------------------------------------------------------ */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ---- Keyframe-backed animations -------------------------------------- */
+  --animate-fade-up: fade-up 0.7s var(--ease-silk) both;
+  --animate-fade-in: fade-in 0.6s var(--ease-silk) both;
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-aurora: aurora 16s ease-in-out infinite alternate;
+  --animate-ring: ring 2.4s ease-out infinite;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ---- Palette (theme-aware) -------------------------------------------- */
+  --color-ink: var(--noir-ink);
+  --color-carbon: var(--noir-carbon);
+  --color-surface: var(--noir-surface);
+  --color-elevated: var(--noir-elevated);
+  --color-line: var(--noir-line);
+
+  --color-ivory: var(--noir-ivory);
+  --color-smoke: var(--noir-smoke);
+  --color-mute: var(--noir-mute);
+
+  --color-gold: var(--noir-gold);
+  --color-gold-soft: var(--noir-gold-soft);
+  --color-copper: var(--noir-copper);
+  --color-ongold: var(--noir-ongold);
+
+  --color-success: var(--noir-success);
+  --color-warning: var(--noir-warning);
+  --color-danger: var(--noir-danger);
+  --color-info: var(--noir-info);
+
+  /* ---- Shadows (theme-aware) -------------------------------------------- */
+  --shadow-soft: var(--noir-shadow-soft);
+  --shadow-lift: var(--noir-shadow-lift);
+  --shadow-glow: var(--noir-shadow-glow);
+
+  /* ---- Typography ------------------------------------------------------- */
+  --font-sans: var(--font-vazirmatn), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-vazirmatn), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* `dark:` / `light:` variants driven by the class next-themes writes. */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+/* ============================================================================
+   KEYFRAMES
+   ========================================================================= */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes shimmer {
+  from { transform: translate3d(-100%, 0, 0); }
+  to   { transform: translate3d(100%, 0, 0); }
+}
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -14px, 0); }
+}
+@keyframes aurora {
+  0%   { transform: translate3d(-6%, -4%, 0) scale(1); opacity: 0.55; }
+  50%  { transform: translate3d(4%, 2%, 0) scale(1.12); opacity: 0.8; }
+  100% { transform: translate3d(-3%, 5%, 0) scale(1.04); opacity: 0.6; }
+}
+@keyframes ring {
+  0%   { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes accordion-down {
+  from { height: 0; }
+  to   { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to   { height: 0; }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.97); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes dialog-out {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to   { opacity: 0; transform: translate3d(0, 6px, 0) scale(0.98); }
+}
+@keyframes overlay-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlay-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes sheet-in-left   { from { transform: translate3d(-100%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes sheet-out-left  { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-100%, 0, 0); } }
+@keyframes sheet-in-right  { from { transform: translate3d(100%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes sheet-out-right { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(100%, 0, 0); } }
+@keyframes sheet-in-bottom  { from { transform: translate3d(0, 100%, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes sheet-out-bottom { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, 100%, 0); } }
+@keyframes ticker-y {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -50%, 0); }
+}
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes theme-sun {
+  from { opacity: 0; transform: rotate(-60deg) scale(0.5); }
+  to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+@keyframes theme-moon {
+  from { opacity: 0; transform: rotate(40deg) scale(0.55); }
+  to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================= */
+
+@layer base {
+  * {
+    border-color: var(--noir-line);
+  }
+
+  /* --------------------------------------------------------------------------
+     Generated artwork (scripts/generate-art.mjs) is a dark editorial
+     composition, so light mode inverts it — with the hue rotated back — to sit
+     inside light surfaces instead of fighting them.
+
+     The inversion is therefore opt-in. Only assets explicitly marked
+     `media-invertible` are touched; real photographs (admin uploads stored as
+     data URLs, remote URLs, user avatars) keep their true colours.
+     `media-natural` stays supported as an explicit opt-out.
+     ------------------------------------------------------------------------ */
+  html.light img.media-invertible:not(.media-natural) {
+    filter: invert(1) hue-rotate(180deg) saturate(0.78) brightness(1.07) contrast(0.95);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--noir-ink);
+    color: var(--noir-ivory);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01" 1, "cv01" 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--noir-gold) 35%, transparent);
+    color: var(--noir-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--noir-gold) 75%, transparent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Sleek, theme-matched scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--noir-line) transparent;
+  }
+  *::-webkit-scrollbar { width: 9px; height: 9px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: var(--noir-line);
+    border-radius: 999px;
+    border: 2px solid var(--noir-ink);
+  }
+  *::-webkit-scrollbar-thumb:hover { background: var(--noir-mute); }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  /* Colour crossfade while switching themes (added briefly by the toggle). */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition:
+      background-color 380ms var(--ease-silk),
+      border-color 380ms var(--ease-silk),
+      color 380ms var(--ease-silk),
+      fill 380ms var(--ease-silk),
+      stroke 380ms var(--ease-silk),
+      box-shadow 380ms var(--ease-silk) !important;
+    transition-delay: 0ms !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================================
+   UTILITIES
+   ========================================================================= */
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 84rem;
+  padding-inline: 1.25rem;
+  @media (min-width: 768px) { padding-inline: 2rem; }
+  @media (min-width: 1280px) { padding-inline: 2.5rem; }
+}
+
+@utility hairline {
+  border: 1px solid color-mix(in oklab, var(--noir-ivory) 9%, transparent);
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--noir-surface) 78%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid color-mix(in oklab, var(--noir-ivory) 8%, transparent);
+}
+
+@utility gold-text {
+  background-image: linear-gradient(
+    100deg,
+    var(--noir-copper) 0%,
+    var(--noir-gold) 32%,
+    var(--noir-gold-soft) 55%,
+    var(--noir-gold) 78%,
+    var(--noir-copper) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility gold-surface {
+  background-image: linear-gradient(
+    100deg,
+    var(--noir-copper) 0%,
+    var(--noir-gold) 38%,
+    var(--noir-gold-soft) 62%,
+    var(--noir-copper) 100%
+  );
+}
+
+@utility text-elegant {
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+@utility grain {
+  position: relative;
+}
+@utility grain-layer {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+}
+
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+/**
+ * Restores the dark palette on a subtree.
+ *
+ * Applied to media overlays (hero art, collection covers, gallery captions…)
+ * so that captions sitting on imagery keep their light-on-dark treatment even
+ * when the rest of the page is in light mode.
+ */
+@utility on-dark {
+  --noir-ink: #0b0b0d;
+  --noir-carbon: #101014;
+  --noir-surface: #15151a;
+  --noir-elevated: #1c1c23;
+  --noir-line: #26262e;
+  --noir-ivory: #f6f3ee;
+  --noir-smoke: #a7a29b;
+  --noir-mute: #6e6a64;
+  --noir-gold: #c8a24c;
+  --noir-gold-soft: #e6ce8c;
+  --noir-copper: #a9713b;
+  --noir-ongold: #17130a;
+  --noir-success: #6fae7f;
+  --noir-warning: #d8a24a;
+  --noir-danger: #e0645c;
+  --noir-info: #6c9bd1;
+  color: var(--noir-ivory);
+}
+
+/* Radix animated primitives ------------------------------------------------ */
+
+@utility radix-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(0 0 0 / 0.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  &[data-state="open"]  { animation: overlay-in 0.25s var(--ease-silk) both; }
+  &[data-state="closed"] { animation: overlay-out 0.2s var(--ease-silk) both; }
+}
+
+@utility radix-pop {
+  &[data-state="open"]  { animation: dialog-in 0.28s var(--ease-silk) both; }
+  &[data-state="closed"] { animation: dialog-out 0.18s var(--ease-silk) both; }
+}
+
+@utility radix-sheet-left {
+  &[data-state="open"]   { animation: sheet-in-left 0.46s var(--ease-silk) both; }
+  &[data-state="closed"] { animation: sheet-out-left 0.3s var(--ease-silk) both; }
+}
+@utility radix-sheet-right {
+  &[data-state="open"]   { animation: sheet-in-right 0.46s var(--ease-silk) both; }
+  &[data-state="closed"] { animation: sheet-out-right 0.3s var(--ease-silk) both; }
+}
+@utility radix-sheet-bottom {
+  &[data-state="open"]   { animation: sheet-in-bottom 0.46s var(--ease-silk) both; }
+  &[data-state="closed"] { animation: sheet-out-bottom 0.3s var(--ease-silk) both; }
+}
+
+/**
+ * Bottom scrim for imagery. Deliberately fixed to a dark base so pictures keep
+ * their contrast in light mode.
+ */
+@utility overlay-scrim {
+  background-image: linear-gradient(
+    to top,
+    rgb(var(--noir-veil) / 0.94) 0%,
+    rgb(var(--noir-veil) / 0.5) 45%,
+    transparent 100%
+  );
+}
+
+@utility radix-accordion {
+  overflow: hidden;
+  &[data-state="open"]  { animation: accordion-down 0.32s var(--ease-silk); }
+  &[data-state="closed"] { animation: accordion-up 0.26s var(--ease-silk); }
+}
+
+/* Number tabular alignment for prices */
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }

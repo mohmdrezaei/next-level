@@ -1,0 +1,13 @@
+
+> next-level-atelier@1.0.0 build
+> next build
+
+▲ Next.js 16.3.6 (Turbopack)
+✓ Running next.config.ts took 57ms
+
+> Build error occurred
+Error: [safe-delete] 操作失败: ERROR D:\project\next-level\.next\wtest.tmp: Error during a `trash` operation: Unknown { description: "Some operations were aborted" }
+    at trashViaBinary (D:\WorkBuddyAI\resources\app.asar.unpacked\cli\vendor\shim\node-safe-delete-shim.cjs:271:15)
+    at trashItem (D:\WorkBuddyAI\resources\app.asar.unpacked\cli\vendor\shim\node-safe-delete-shim.cjs:284:9)
+    at tryTrash (D:\WorkBuddyAI\resources\app.asar.unpacked\cli\vendor\shim\node-safe-delete-shim.cjs:576:5)
+    at Object.unlinkSync (D:\WorkBuddyAI\resources\app.asar.unpacked\cli\vendor\shim\node-safe-delete-shim.cjs:634:9)
