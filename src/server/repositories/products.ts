@@ -697,12 +697,26 @@ export async function updateProduct(id: string, input: ProductDraft): Promise<Pr
 }
 
 export async function deleteProduct(id: string): Promise<Product> {
-  const existing = await getProductById(id);
+  const [existing] = await deleteProducts([id]);
   if (!existing) throw notFound("محصول مورد نظر یافت نشد.");
+  return existing;
+}
+
+/** Bulk delete used by the admin panel's group actions. */
+export async function deleteProducts(ids: string[]): Promise<Product[]> {
+  const unique = [...new Set(ids.filter(Boolean))];
+  if (!unique.length) return [];
+
+  const removed: Product[] = [];
+  for (const id of unique) {
+    const existing = await getProductById(id);
+    if (existing) removed.push(existing);
+  }
+  if (!removed.length) return [];
 
   // Cascades remove colours/variants/images; sets lose the dangling piece.
-  await db.delete(products).where(eq(products.id, id));
-  return existing;
+  await db.delete(products).where(inArray(products.id, removed.map((product) => product.id)));
+  return removed;
 }
 
 export async function duplicateProduct(id: string): Promise<Product> {

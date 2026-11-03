@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { AdminPageHeader } from "@/features/admin/components/page-header";
 import { OrdersTable } from "@/features/admin/components/orders-table";
-import { fetchAdminOrders } from "@/features/admin/actions";
+import { fetchAdminOrders, fetchAdminProducts } from "@/features/admin/actions";
 import { isRevenueOrder } from "@/features/admin/lib/metrics";
 import { formatCompactPrice, formatNumber, toPersianDigits } from "@/lib/format";
 import { RefreshCcw, ShoppingBag, Truck, Wallet } from "lucide-react";
@@ -9,7 +9,7 @@ import { RefreshCcw, ShoppingBag, Truck, Wallet } from "lucide-react";
 export const metadata = { title: "سفارش‌ها" };
 
 export default async function AdminOrdersPage() {
-  const orders = await fetchAdminOrders();
+  const [orders, products] = await Promise.all([fetchAdminOrders(), fetchAdminProducts()]);
 
   const revenue = orders.filter(isRevenueOrder).reduce((sum, order) => sum + order.total, 0);
   const open = orders.filter((order) =>
@@ -50,7 +50,7 @@ export default async function AdminOrdersPage() {
         ))}
       </section>
 
-      <OrdersTable orders={orders} />
+      <OrdersTable orders={orders} products={products} />
     </div>
   );
 }

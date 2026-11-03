@@ -12,6 +12,7 @@ import { db } from "@/db";
 import { customers, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { newId } from "../ids";
+import { syncUserToCustomer } from "../repositories/customers";
 
 interface OtpEntry {
   phone: string;
@@ -313,6 +314,15 @@ export async function authenticateWithOtp(
       customerId = cId;
     }
   }
+
+  // Ensure synced to customer ledger
+  await syncUserToCustomer({
+    id: sessionUser.id,
+    name: sessionUser.name,
+    phone: sessionUser.phone,
+    email: sessionUser.email,
+    customerId,
+  });
 
   // Create web session cookie (Next.js SSR session)
   await createSessionForUser(sessionUser.id);

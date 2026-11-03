@@ -15,6 +15,7 @@ import { revokeSessionsForUser } from "../auth/session";
 import { badRequest, conflict, notFound } from "../http";
 import { newId } from "../ids";
 import { cleanPhone, isValidEmail, isValidPhone } from "../phone";
+import { syncUserToCustomer } from "./customers";
 import {
   findMemoryUserByEmail,
   findMemoryUserById,
@@ -260,7 +261,16 @@ export async function createUser(input: RegisterInput): Promise<SessionUser> {
     // DB offline
   }
 
-  return toSessionUserFromMemory(saved);
+  const session = toSessionUserFromMemory(saved);
+  await syncUserToCustomer({
+    id: saved.id,
+    name: saved.name,
+    phone: saved.phone,
+    email: saved.email,
+    customerId: saved.customerId,
+  });
+
+  return session;
 }
 
 /** Verify a credential pair, returning the session user on success. */
@@ -353,13 +363,22 @@ export interface ProfileInput {
 /** Update the fields the shopper owns on `/account/profile`. */
 export async function updateProfile(userId: string, input: ProfileInput): Promise<ProfileRecord> {
   const mem = findMemoryUserById(userId);
+  let updatedName = "";
+  let updatedPhone = "";
+  let updatedEmail = "";
+  let customerId = "";
+
   if (mem) {
     if (input.name) mem.name = sanitizeString(input.name, 80);
     if (input.phone) mem.phone = cleanPhone(input.phone);
     if (input.email) mem.email = sanitizeString(input.email, 160).toLowerCase();
     if (input.birthday) mem.birthday = sanitizeString(input.birthday, 10);
     if (input.gender && GENDERS.includes(input.gender as Gender)) mem.gender = input.gender as Gender;
-    return memoryUserToProfile(mem);
+
+    updatedName = mem.name;
+    updatedPhone = mem.phone;
+    updatedEmail = mem.email;
+    customerId = mem.customerId;
   }
 
   try {
@@ -375,13 +394,29 @@ export async function updateProfile(userId: string, input: ProfileInput): Promis
         : (row.gender as Gender);
 
       await db.update(users).set({ name, phone, email, birthday, gender }).where(eq(users.id, userId));
-      return getProfile(userId);
+
+      updatedName = name;
+      updatedPhone = phone;
+      updatedEmail = email;
+      customerId = row.customerId || customerId;
     }
   } catch {
     // DB offline
   }
 
-  throw notFound("کاربر مورد نظر یافت نشد.");
+  // Bidirectional sync: update customer ledger in memory and DB immediately
+  if (updatedName || updatedPhone || updatedEmail) {
+    await syncUserToCustomer({
+      id: userId,
+      name: updatedName || "کاربر",
+      phone: updatedPhone,
+      email: updatedEmail,
+      customerId: customerId || null,
+    });
+  }
+
+  if (mem) return memoryUserToProfile(mem);
+  return getProfile(userId);
 }
 
 export async function changePassword(
@@ -399,26 +434,36 @@ export async function changePassword(
 /** Ensure a customer ledger row exists for a signed-in shopper. */
 export async function ensureCustomerForUser(userId: string): Promise<string | null> {
   const mem = findMemoryUserById(userId);
-  if (mem && mem.customerId) return mem.customerId;
+  if (mem) {
+    const cust = await syncUserToCustomer({
+      id: mem.id,
+      name: mem.name,
+      phone: mem.phone,
+      email: mem.email,
+      customerId: mem.customerId,
+    });
+    mem.customerId = cust.id;
+    return cust.id;
+  }
 
   try {
     const rows = await db.select().from(users).where(eq(users.id, userId)).limit(1);
     const user = rows[0];
-    if (user?.customerId) return user.customerId;
-
     if (user) {
-      const customerId = newId("c");
-      await db.update(users).set({ customerId }).where(eq(users.id, userId));
-      return customerId;
+      const cust = await syncUserToCustomer({
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+        customerId: user.customerId,
+      });
+      if (user.customerId !== cust.id) {
+        await db.update(users).set({ customerId: cust.id }).where(eq(users.id, userId));
+      }
+      return cust.id;
     }
   } catch {
     // DB offline
-  }
-
-  if (mem) {
-    const cId = newId("c");
-    mem.customerId = cId;
-    return cId;
   }
 
   return "c-001";

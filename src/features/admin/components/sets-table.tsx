@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ExternalLink, MoreHorizontal, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -36,8 +37,9 @@ import {
   TR,
 } from "./data-table";
 import { SetForm } from "./set-form";
+import { BulkDeleteButton } from "./bulk-actions";
 import { SetCollage } from "@/features/sets/components/set-collage";
-import { deleteSetAction, duplicateSetAction } from "../actions";
+import { deleteSetAction, deleteSetsAction, duplicateSetAction } from "../actions";
 import { resolveSet, setPricing, setRoles } from "@/features/sets/lib/set-helpers";
 import { formatCompactPrice, formatNumber, toPersianDigits } from "@/lib/format";
 import { normalize } from "@/features/products/lib/query";
@@ -54,6 +56,7 @@ export function SetsTable({
   sets: ProductSet[];
   products: Product[];
 }) {
+  const router = useRouter();
   const [query, setQuery] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [selected, setSelected] = React.useState<string[]>([]);
@@ -96,8 +99,10 @@ export function SetsTable({
     setBusy(true);
     const result = await action();
     setBusy(false);
-    if (result.ok) toast.success(result.message);
-    else toast.error(result.message);
+    if (result.ok) {
+      toast.success(result.message);
+      router.refresh();
+    } else toast.error(result.message);
     return result.ok;
   };
 
@@ -140,6 +145,17 @@ export function SetsTable({
           ) : null}
 
           <span className="tnum text-[0.68rem] text-mute">{formatNumber(rows.length)} ست</span>
+
+          <BulkDeleteButton
+            count={selected.length}
+            entityLabel="ست"
+            busy={busy}
+            onConfirm={async () => {
+              const ok = await run(() => deleteSetsAction(selected));
+              if (ok) setSelected([]);
+              return ok;
+            }}
+          />
 
           <Button type="button" variant="gold" size="sm" className="ms-auto" onClick={openCreate}>
             <Plus className="size-3.5" />

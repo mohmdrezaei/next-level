@@ -323,11 +323,25 @@ export async function updateSet(slug: string, input: SetDraft): Promise<ProductS
 }
 
 export async function deleteSet(slug: string): Promise<ProductSet> {
-  const existing = await getSet(slug);
+  const [existing] = await deleteSets([slug]);
   if (!existing) throw notFound("ست مورد نظر یافت نشد.");
-
-  await db.delete(sets).where(eq(sets.slug, slug));
   return existing;
+}
+
+/** Bulk delete used by the admin panel's group actions. */
+export async function deleteSets(slugs: string[]): Promise<ProductSet[]> {
+  const unique = [...new Set(slugs.filter(Boolean))];
+  if (!unique.length) return [];
+
+  const removed: ProductSet[] = [];
+  for (const slug of unique) {
+    const existing = await getSet(slug);
+    if (existing) removed.push(existing);
+  }
+  if (!removed.length) return [];
+
+  await db.delete(sets).where(inArray(sets.slug, removed.map((set) => set.slug)));
+  return removed;
 }
 
 export async function duplicateSet(slug: string): Promise<ProductSet> {

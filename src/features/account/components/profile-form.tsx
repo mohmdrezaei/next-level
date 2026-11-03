@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { KeyRound, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ export function ProfileForm({
   totalOrders: number;
   totalSpent: number;
 }) {
+  const router = useRouter();
   const [values, setValues] = React.useState<Profile>({
     name: user.name,
     email: user.email,
@@ -100,6 +102,7 @@ export function ProfileForm({
       });
       setValues((state) => ({ ...state, ...saved }));
       toast.success("اطلاعات حساب ذخیره شد");
+      router.refresh();
     } catch (error) {
       if (error instanceof ApiClientError && error.field) {
         setErrors((state) => ({ ...state, [error.field as keyof Profile]: error.message }));

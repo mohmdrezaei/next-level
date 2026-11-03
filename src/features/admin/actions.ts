@@ -27,6 +27,10 @@ export type CustomerInput = customersRepo.CustomerInput;
 export type SetItemInput = setsRepo.SetItemInput;
 export type SetInput = setsRepo.SetInput;
 
+export type AdminOrderInput = ordersRepo.AdminOrderInput;
+export type OrderItemInput = ordersRepo.OrderItemInput;
+export type OrderInput = ordersRepo.OrderInput;
+
 export type { CategorySlug, Customer, Order, Product, ProductBadge, ProductSet, OrderStatus };
 
 /**
@@ -194,5 +198,61 @@ export async function changeOrderStatusAction(
   return guard(
     () => ordersRepo.changeOrderStatus(code, status),
     (order) => `وضعیت سفارش ${order.code} به‌روزرسانی شد.`,
+  );
+}
+
+export async function createOrderAction(input: OrderInput): Promise<ActionResult> {
+  return guard(
+    () => ordersRepo.createOrder(input, { enforceSettings: false }),
+    (order) => `سفارش ${order.code} برای «${order.customerName}» ثبت شد.`,
+  );
+}
+
+export async function updateOrderAction(
+  code: string,
+  input: AdminOrderInput,
+): Promise<ActionResult> {
+  return guard(
+    () => ordersRepo.updateOrder(code, input),
+    (order) => `تغییرات سفارش ${order.code} ذخیره شد.`,
+  );
+}
+
+export async function deleteOrderAction(code: string): Promise<ActionResult> {
+  return guard(
+    () => ordersRepo.deleteOrder(code),
+    (order) => `سفارش ${order.code} حذف شد.`,
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Bulk deletes (group actions)                                              */
+/* -------------------------------------------------------------------------- */
+
+export async function deleteOrdersAction(codes: string[]): Promise<ActionResult> {
+  return guard(
+    () => ordersRepo.deleteOrders(codes),
+    (removed) => `${removed.length.toLocaleString("fa-IR")} سفارش حذف شد.`,
+  );
+}
+
+export async function deleteProductsAction(ids: string[]): Promise<ActionResult> {
+  return guard(
+    () => productsRepo.deleteProducts(ids),
+    (removed) => `${removed.length.toLocaleString("fa-IR")} محصول حذف شد.`,
+  );
+}
+
+export async function deleteCustomersAction(ids: string[]): Promise<ActionResult> {
+  return guard(
+    () => customersRepo.deleteCustomers(ids),
+    (removed) => `${removed.length.toLocaleString("fa-IR")} مشتری حذف شد.`,
+  );
+}
+
+export async function deleteSetsAction(slugs: string[]): Promise<ActionResult> {
+  return guard(
+    () => setsRepo.deleteSets(slugs),
+    (removed) => `${removed.length.toLocaleString("fa-IR")} ست حذف شد.`,
   );
 }

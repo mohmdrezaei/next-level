@@ -22,7 +22,7 @@ interface CustomerSeed {
   joinedDaysAgo: number;
 }
 
-const CUSTOMER_SEEDS: CustomerSeed[] = [
+export const CUSTOMER_SEEDS: CustomerSeed[] = [
   {
     id: "c-001",
     name: "آرش مهرآذین",

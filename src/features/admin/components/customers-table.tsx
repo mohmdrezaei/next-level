@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Crown,
   Mail,
@@ -22,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 import { InitialsAvatar } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/controls";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -59,9 +61,11 @@ import {
   TR,
 } from "./data-table";
 import { OrderStatusBadge, TierBadge } from "./status-badge";
+import { BulkDeleteButton, SelectionPill } from "./bulk-actions";
 import {
   createCustomerAction,
   deleteCustomerAction,
+  deleteCustomersAction,
   recalculateCustomerStatsAction,
   updateCustomerAction,
 } from "../actions";
@@ -74,6 +78,7 @@ import {
   toPersianDigits,
 } from "@/lib/format";
 import { normalize } from "@/features/products/lib/query";
+import { cn } from "@/lib/utils";
 import type { Customer, Order } from "@/features/orders/types";
 
 const PAGE_SIZE = 8;
@@ -124,6 +129,7 @@ export function CustomersTable({
   /** Order ledger, used for the profile drawer and the «recalculate» action. */
   orders: Order[];
 }) {
+  const router = useRouter();
   const [query, setQuery] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [active, setActive] = React.useState<Customer | null>(null);
@@ -134,6 +140,7 @@ export function CustomersTable({
   const [form, setForm] = React.useState<CustomerInput>(EMPTY_CUSTOMER);
 
   const [pendingDelete, setPendingDelete] = React.useState<Customer | null>(null);
+  const [selected, setSelected] = React.useState<string[]>([]);
   const [busy, setBusy] = React.useState(false);
 
   const filtered = React.useMemo(() => {
@@ -152,6 +159,19 @@ export function CustomersTable({
   const current = Math.min(page, totalPages);
   const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
+  const allOnPageSelected = rows.length > 0 && rows.every((row) => selected.includes(row.id));
+
+  const toggleAll = () => {
+    if (allOnPageSelected) {
+      setSelected((state) => state.filter((id) => !rows.some((row) => row.id === id)));
+    } else {
+      setSelected((state) => [...new Set([...state, ...rows.map((row) => row.id)])]);
+    }
+  };
+
+  const toggleOne = (id: string) =>
+    setSelected((state) => (state.includes(id) ? state.filter((item) => item !== id) : [...state, id]));
+
   const customerOrders = active
     ? orders.filter(
         (order) =>
@@ -167,8 +187,12 @@ export function CustomersTable({
     setBusy(true);
     const result = await action();
     setBusy(false);
-    if (result.ok) toast.success(result.message);
-    else toast.error(result.message);
+    if (result.ok) {
+      toast.success(result.message);
+      router.refresh();
+    } else {
+      toast.error(result.message);
+    }
     return result.ok;
   };
 
@@ -222,6 +246,19 @@ export function CustomersTable({
             {formatNumber(filtered.length)} مشتری
           </span>
 
+          <SelectionPill count={selected.length} onClear={() => setSelected([])} />
+
+          <BulkDeleteButton
+            count={selected.length}
+            entityLabel="مشتری"
+            busy={busy}
+            onConfirm={async () => {
+              const ok = await run(() => deleteCustomersAction(selected));
+              if (ok) setSelected([]);
+              return ok;
+            }}
+          />
+
           <Button type="button" variant="gold" size="sm" className="ms-auto" onClick={openCreate}>
             <UserPlus className="size-3.5" />
             مشتری جدید
@@ -231,6 +268,13 @@ export function CustomersTable({
         <Table>
           <THead>
             <TR>
+              <TH className="w-10">
+                <Checkbox
+                  checked={allOnPageSelected}
+                  onCheckedChange={toggleAll}
+                  aria-label="انتخاب همه"
+                />
+              </TH>
               <TH>مشتری</TH>
               <TH>تماس</TH>
               <TH>شهر</TH>
@@ -243,12 +287,22 @@ export function CustomersTable({
           </THead>
 
           <TBody>
-            {rows.map((customer) => (
+            {rows.map((customer) => {
+              const checked = selected.includes(customer.id);
+
+              return (
               <TR
                 key={customer.id}
-                className="cursor-pointer"
+                className={cn("cursor-pointer", checked && "bg-gold/[0.04]")}
                 onClick={() => setActive(customer)}
               >
+                <TD onClick={(event) => event.stopPropagation()}>
+                  <Checkbox
+                    checked={checked}
+                    onCheckedChange={() => toggleOne(customer.id)}
+                    aria-label={`انتخاب ${customer.name}`}
+                  />
+                </TD>
                 <TD className="whitespace-normal">
                   <span className="flex items-center gap-3">
                     <InitialsAvatar name={customer.name} accent="#c8a24c" className="size-9" />
@@ -335,10 +389,11 @@ export function CustomersTable({
                   </DropdownMenu>
                 </TD>
               </TR>
-            ))}
+              );
+            })}
 
             {rows.length === 0 ? (
-              <TableEmpty colSpan={8} message="مشتری‌ای با این مشخصات پیدا نشد." />
+              <TableEmpty colSpan={9} message="مشتری‌ای با این مشخصات پیدا نشد." />
             ) : null}
           </TBody>
         </Table>
@@ -631,7 +686,10 @@ export function CustomersTable({
               onClick={async () => {
                 if (!pendingDelete) return;
                 const ok = await run(() => deleteCustomerAction(pendingDelete.id));
-                if (ok) setPendingDelete(null);
+                if (ok) {
+                  setSelected((state) => state.filter((id) => id !== pendingDelete.id));
+                  setPendingDelete(null);
+                }
               }}
             >
               <Trash2 className="size-4" />

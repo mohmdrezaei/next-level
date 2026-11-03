@@ -451,11 +451,24 @@ export interface PricedCart {
   couponLabel: string | null;
 }
 
-export async function priceCart(input: {
-  items: OrderItemInput[];
-  shippingMethod?: ShippingMethodId;
-  couponCode?: string | null;
-}): Promise<PricedCart> {
+export interface PriceCartOptions {
+  /**
+   * When `false` the catalogue stock limits are ignored. Used by the admin
+   * panel, where an operator may legitimately record an order for a size that
+   * is momentarily out of stock.
+   */
+  enforceStock?: boolean;
+}
+
+export async function priceCart(
+  input: {
+    items: OrderItemInput[];
+    shippingMethod?: ShippingMethodId;
+    couponCode?: string | null;
+  },
+  options: PriceCartOptions = {},
+): Promise<PricedCart> {
+  const enforceStock = options.enforceStock !== false;
   if (!Array.isArray(input.items) || input.items.length === 0) {
     throw badRequest("سبد خرید خالی است.", { field: "items" });
   }
@@ -482,10 +495,10 @@ export async function priceCart(input: {
     const variant = product.variants.find((candidate) => candidate.size === size);
     const quantity = Math.max(1, Math.floor(Number(line.quantity ?? 1)));
 
-    if (variant && variant.stock <= 0) {
+    if (enforceStock && variant && variant.stock <= 0) {
       throw badRequest(`سایز ${size} از «${product.name}» موجود نیست.`, { field: "items" });
     }
-    if (variant && quantity > variant.stock) {
+    if (enforceStock && variant && quantity > variant.stock) {
       throw badRequest(
         `از «${product.name}» تنها ${variant.stock} عدد در سایز ${size} موجود است.`,
         { field: "items" },
@@ -553,7 +566,18 @@ export async function priceCart(input: {
   };
 }
 
-export async function createOrder(input: OrderInput): Promise<Order> {
+export interface CreateOrderOptions {
+  /**
+   * When `false` the storefront availability rules (e.g. COD being disabled)
+   * are skipped. The admin panel uses this to record manual orders.
+   */
+  enforceSettings?: boolean;
+}
+
+export async function createOrder(
+  input: OrderInput,
+  options: CreateOrderOptions = {},
+): Promise<Order> {
   if (!input.address || typeof input.address !== "object") {
     throw badRequest("نشانی ارسال سفارش الزامی است.", { field: "address" });
   }
@@ -574,7 +598,7 @@ export async function createOrder(input: OrderInput): Promise<Order> {
       ? input.paymentMethod
       : "gateway";
 
-  if (paymentMethod === "cod" && !settings.enableCod) {
+  if (options.enforceSettings !== false && paymentMethod === "cod" && !settings.enableCod) {
     throw badRequest("پرداخت در محل در حال حاضر غیرفعال است.", { field: "paymentMethod" });
   }
 
@@ -691,6 +715,161 @@ export async function createOrder(input: OrderInput): Promise<Order> {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Admin edits                                                               */
+/* -------------------------------------------------------------------------- */
+
+export interface AdminOrderInput {
+  customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  address: OrderAddress;
+  status: OrderStatus;
+  shippingMethod?: ShippingMethodId;
+  paymentMethod?: PaymentMethodId;
+  /** When present the line items are replaced and the invoice is repriced. */
+  items?: OrderItemInput[];
+  trackingCode?: string | null;
+}
+
+async function nextEventPosition(orderId: string): Promise<number> {
+  try {
+    const rows = await db
+      .select({ position: orderEvents.position })
+      .from(orderEvents)
+      .where(eq(orderEvents.orderId, orderId));
+    return rows.reduce((max, row) => Math.max(max, row.position), -1) + 1;
+  } catch {
+    return 0;
+  }
+}
+
+export async function updateOrder(code: string, input: AdminOrderInput): Promise<Order> {
+  const existing = await getOrderByCode(code);
+  if (!existing) throw notFound("سفارش مورد نظر یافت نشد.");
+
+  const address: OrderAddress = {
+    fullName: input.address.fullName?.trim() ?? "",
+    phone: input.address.phone?.trim() ?? "",
+    province: input.address.province?.trim() ?? "",
+    city: input.address.city?.trim() ?? "",
+    line1: input.address.line1?.trim() ?? "",
+    postalCode: input.address.postalCode?.trim() ?? "",
+  };
+  if (!address.fullName || !address.line1) {
+    throw badRequest("نام گیرنده و نشانی سفارش الزامی است.", { field: "address" });
+  }
+
+  const status: OrderStatus = ORDER_STATUSES.includes(input.status)
+    ? input.status
+    : existing.status;
+
+  let priced: PricedCart | null = null;
+  if (Array.isArray(input.items) && input.items.length > 0) {
+    priced = await priceCart(
+      { items: input.items, shippingMethod: input.shippingMethod ?? existing.shippingMethod },
+      { enforceStock: false },
+    );
+  }
+
+  const paymentMethod: PaymentMethodId =
+    input.paymentMethod && PAYMENT_METHODS.some((method) => method.id === input.paymentMethod)
+      ? input.paymentMethod
+      : existing.paymentMethod;
+
+  const trackingCode =
+    input.trackingCode === undefined
+      ? existing.trackingCode
+      : input.trackingCode?.trim() || null;
+
+  const timeline = [...existing.timeline];
+  const statusChanged = status !== existing.status;
+  if (statusChanged) {
+    timeline.push({ status, at: new Date().toISOString(), note: ORDER_NOTES[status] });
+  }
+
+  const updated: Order = {
+    ...existing,
+    customerName: input.customerName?.trim() || address.fullName,
+    customerPhone: input.customerPhone?.trim() ?? existing.customerPhone,
+    customerEmail: input.customerEmail?.trim() ?? existing.customerEmail,
+    address,
+    status,
+    shippingMethod: priced ? priced.shippingMethod : existing.shippingMethod,
+    paymentMethod,
+    items: priced ? priced.items : existing.items,
+    subtotal: priced ? priced.subtotal : existing.subtotal,
+    discount: priced ? priced.discount : existing.discount,
+    shipping: priced ? priced.shipping : existing.shipping,
+    tax: priced ? priced.tax : existing.tax,
+    total: priced ? priced.total : existing.total,
+    trackingCode,
+    timeline,
+  };
+
+  getMemoryOrders().set(existing.id, updated);
+  getMemoryOrdersByCode().set(code, updated);
+
+  try {
+    await db
+      .update(orders)
+      .set({
+        customerName: updated.customerName,
+        customerPhone: updated.customerPhone,
+        customerEmail: updated.customerEmail,
+        status: updated.status,
+        subtotal: updated.subtotal,
+        discount: updated.discount,
+        shipping: updated.shipping,
+        tax: updated.tax,
+        total: updated.total,
+        shippingMethod: updated.shippingMethod,
+        paymentMethod: updated.paymentMethod,
+        addressFullName: address.fullName,
+        addressPhone: address.phone,
+        addressProvince: address.province,
+        addressCity: address.city,
+        addressLine1: address.line1,
+        addressPostalCode: address.postalCode,
+        trackingCode: updated.trackingCode,
+      })
+      .where(eq(orders.id, existing.id));
+
+    if (priced) {
+      await db.delete(orderItems).where(eq(orderItems.orderId, existing.id));
+      await db.insert(orderItems).values(
+        priced.items.map((item, index) => ({
+          orderId: existing.id,
+          productId: item.productId,
+          slug: item.slug,
+          name: item.name,
+          latinName: item.latinName,
+          image: item.image,
+          size: item.size,
+          color: item.color,
+          price: item.price,
+          quantity: item.quantity,
+          position: index,
+        })),
+      );
+    }
+
+    if (statusChanged) {
+      await db.insert(orderEvents).values({
+        orderId: existing.id,
+        status,
+        at: new Date(),
+        note: ORDER_NOTES[status],
+        position: await nextEventPosition(existing.id),
+      });
+    }
+  } catch {
+    // DB offline
+  }
+
+  return updated;
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Status transitions                                                        */
 /* -------------------------------------------------------------------------- */
 
@@ -732,17 +911,31 @@ export async function changeOrderStatus(code: string, status: OrderStatus): Prom
 }
 
 export async function deleteOrder(code: string): Promise<Order> {
-  const existing = await getOrderByCode(code);
+  const [existing] = await deleteOrders([code]);
   if (!existing) throw notFound("سفارش مورد نظر یافت نشد.");
+  return existing;
+}
 
-  getMemoryOrders().delete(existing.id);
-  getMemoryOrdersByCode().delete(code);
+/** Bulk delete used by the admin panel's group actions. */
+export async function deleteOrders(codes: string[]): Promise<Order[]> {
+  const unique = [...new Set(codes.filter(Boolean))];
+  if (!unique.length) return [];
+
+  const removed: Order[] = [];
+  for (const code of unique) {
+    const existing = getMemoryOrdersByCode().get(code) ?? (await getOrderByCode(code));
+    if (!existing) continue;
+
+    getMemoryOrders().delete(existing.id);
+    getMemoryOrdersByCode().delete(code);
+    removed.push(existing);
+  }
 
   try {
-    await db.delete(orders).where(eq(orders.code, code));
+    await db.delete(orders).where(inArray(orders.code, unique));
   } catch {
     // DB offline
   }
 
-  return existing;
+  return removed;
 }

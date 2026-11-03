@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowUpDown,
   Copy,
@@ -52,8 +53,9 @@ import {
   TR,
 } from "./data-table";
 import { ProductBadgePill, StockBadge } from "./status-badge";
+import { BulkDeleteButton } from "./bulk-actions";
 import { CATEGORIES, CATEGORY_MAP } from "@/features/products/data/catalog";
-import { deleteProductAction, duplicateProductAction } from "../actions";
+import { deleteProductAction, deleteProductsAction, duplicateProductAction } from "../actions";
 import { formatCompactPrice, formatNumber, toPersianDigits } from "@/lib/format";
 import { normalize, productStock } from "@/features/products/lib/query";
 import { mediaClassFor } from "@/lib/media";
@@ -73,6 +75,7 @@ const SORT_LABELS: Record<SortKey, string> = {
 };
 
 export function ProductsTable({ products }: { products: Product[] }) {
+  const router = useRouter();
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState<"all" | CategorySlug>("all");
   const [sort, setSort] = React.useState<SortKey>("newest");
@@ -137,8 +140,10 @@ export function ProductsTable({ products }: { products: Product[] }) {
     setBusy(true);
     const result = await action();
     setBusy(false);
-    if (result.ok) toast.success(successPrefix ?? result.message);
-    else toast.error(result.message);
+    if (result.ok) {
+      toast.success(successPrefix ?? result.message);
+      router.refresh();
+    } else toast.error(result.message);
     return result.ok;
   };
 
@@ -204,6 +209,17 @@ export function ProductsTable({ products }: { products: Product[] }) {
                 </button>
               </span>
             ) : null}
+
+            <BulkDeleteButton
+              count={selected.length}
+              entityLabel="محصول"
+              busy={busy}
+              onConfirm={async () => {
+                const ok = await run(() => deleteProductsAction(selected));
+                if (ok) setSelected([]);
+                return ok;
+              }}
+            />
 
             <span className="tnum ms-auto text-[0.68rem] text-mute">
               {formatNumber(filtered.length)} محصول
