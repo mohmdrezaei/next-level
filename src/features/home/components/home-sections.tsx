@@ -40,7 +40,6 @@ export async function HomeSections() {
       <EditorialSplit />
       <CategoryGrid counts={counts} />
       <Testimonials />
-      <CtaBand />
     </>
   );
 }
