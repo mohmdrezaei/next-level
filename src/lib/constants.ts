@@ -1,10 +1,10 @@
 export const SITE = {
   name: "Next Level",
   latinName: "NEXT LEVEL",
-  tagline: "آتلیه پوشاک مردانه",
+  tagline: "بوتیک پوشاک مردانه",
   shortDescription: "پوشاک مردانه با دوخت ایتالیایی، پارچه‌های منتخب و طراحی مینیمال.",
   description:
-    "Next Level یک آتلیه پوشاک مردانه است؛ جایی که پارچه‌های منتخب ایتالیایی و ژاپنی به لباس‌هایی با دوخت دقیق و طراحی مینیمال تبدیل می‌شوند. هر قطعه در تیراژ محدود تولید و پیش از ارسال، مرحله‌به‌مرحله بازرسی می‌شود.",
+    "Next Level یک بوتیک پوشاک مردانه است؛ جایی که پارچه‌های منتخب ایتالیایی و ژاپنی به لباس‌هایی با دوخت دقیق و طراحی مینیمال تبدیل می‌شوند. هر قطعه در تیراژ محدود تولید و پیش از ارسال، مرحله‌به‌مرحله بازرسی می‌شود.",
   phone: "۰۲۱ ۹۱۰۰ ۲۲۳۳",
   phoneRaw: "+982191002233",
   email: "care@nextlevel.ir",
@@ -16,9 +16,9 @@ export const SITE = {
 export type NavLink = { title: string; href: string; description?: string };
 
 export const PRIMARY_NAV: NavLink[] = [
-  { title: "فروشگاه", href: "/shop", description: "همه محصولات آتلیه" },
+  { title: "فروشگاه", href: "/shop", description: "همه محصولات بوتیک" },
   { title: "ست‌های کامل", href: "/sets", description: "ترکیب‌های آماده و هماهنگ" },
-  { title: "درباره ما", href: "/about", description: "داستان آتلیه" },
+  { title: "درباره ما", href: "/about", description: "داستان بوتیک" },
   { title: "تماس با ما", href: "/contact", description: "پشتیبانی و همکاری" },
 ];
 
@@ -82,7 +82,7 @@ export const SHIPPING_METHODS = [
   },
   {
     id: "pickup",
-    title: "تحویل حضوری در آتلیه",
+    title: "تحویل حضوری در بوتیک",
     description: "دریافت از بوتیک ولیعصر پس از تأیید آماده‌سازی",
     price: 0,
     estimate: "همان روز",

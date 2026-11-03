@@ -289,7 +289,7 @@ function prepare(input: ProductDraft, id: string, slug: string, base?: ProductRo
   const name = sanitizeString(input.name, 120);
   const category = (input.category ?? base?.category ?? "shirts") as CategorySlug;
   const shortDescription =
-    sanitizeString(input.shortDescription ?? "", 300) || "قطعه‌ای از آتلیه Next Level.";
+    sanitizeString(input.shortDescription ?? "", 300) || "قطعه‌ای از بوتیک Next Level.";
   const description = sanitizeString(input.description ?? "", 5000) || shortDescription;
 
   const materials = sanitizeStringArray(input.materials, { maxItems: 20, maxLength: 120 });

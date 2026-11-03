@@ -68,7 +68,7 @@ export function ContactForm() {
       setSent(true);
       setValues({ name: "", email: "", phone: "", subject: "order", message: "" });
       toast.success("پیام شما ارسال شد", {
-        description: "کارشناسان آتلیه حداکثر تا ۴ ساعت کاری پاسخ می‌دهند.",
+        description: "کارشناسان بوتیک حداکثر تا ۴ ساعت کاری پاسخ می‌دهند.",
       });
       window.setTimeout(() => setSent(false), 5000);
     } catch (error) {

@@ -104,9 +104,13 @@ export async function POST(request: NextRequest) {
 
     const user = await getApiUser();
 
-    // Only a signed-in shopper is linked to a ledger row — and only their own.
-    const customerId =
+    // Link to customer ledger if user is signed in
+    let customerId =
       user && user.role !== "admin" ? await ensureCustomerForUser(user.id) : null;
+
+    const customerPhone = body.customerPhone || body.address.phone || user?.phone || "";
+    const customerName = body.customerName || body.address.fullName || user?.name || "مشتری گرامی";
+    const customerEmail = body.customerEmail || user?.email || "";
 
     const order = await createOrder({
       items: body.items,
@@ -115,9 +119,9 @@ export async function POST(request: NextRequest) {
       paymentMethod: body.paymentMethod as PaymentMethodId | undefined,
       couponCode: body.couponCode ?? null,
       customerId: customerId ?? undefined,
-      customerName: body.customerName ?? user?.name,
-      customerPhone: body.customerPhone ?? user?.phone,
-      customerEmail: body.customerEmail ?? user?.email,
+      customerName,
+      customerPhone,
+      customerEmail,
       status: "pending",
     });
 

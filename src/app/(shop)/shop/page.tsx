@@ -21,7 +21,7 @@ import { formatNumber } from "@/lib/format";
 export const metadata: Metadata = {
   title: "فروشگاه",
   description:
-    "همه محصولات آتلیه Next Level: پالتو، کت و شلوار، پیراهن، بافت، شلوار، کفش و اکسسوری مردانه.",
+    "همه محصولات بوتیک Next Level: پالتو، کت و شلوار، پیراهن، بافت، شلوار، کفش و اکسسوری مردانه.",
 };
 
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
@@ -47,7 +47,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           THE SHOP
         </span>
         <h1 className="text-2xl font-semibold tracking-tight text-ivory sm:text-3xl">
-          همه محصولات آتلیه
+          همه محصولات بوتیک
         </h1>
         <p className="max-w-2xl text-xs leading-7 text-smoke sm:text-sm">
           {formatNumber(products.length)} قطعه در {formatNumber(facets.categories.length)} دسته‌بندی.

@@ -26,7 +26,7 @@ export function CtaBand() {
 
           <p className="mx-auto mt-4 max-w-xl text-xs leading-7 text-smoke sm:text-sm">
             می‌توانید پیش از خرید، قطعات را در بوتیک پرو کنید. اگر نیاز به اصلاح جزئی دوخت
-            (قد آستین، کمر شلوار) باشد، خیاط‌های آتلیه بدون هزینه آن را انجام می‌دهند.
+            (قد آستین، کمر شلوار) باشد، خیاط‌های بوتیک بدون هزینه آن را انجام می‌دهند.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -38,7 +38,7 @@ export function CtaBand() {
             </Button>
             <Button asChild variant="ghost" size="lg">
               <a href={`tel:${SITE.phoneRaw}`}>
-                تماس با آتلیه
+                تماس با بوتیک
                 <span className="tnum text-xs text-mute">{SITE.phone}</span>
               </a>
             </Button>

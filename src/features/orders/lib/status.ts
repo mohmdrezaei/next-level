@@ -17,7 +17,7 @@ export const ORDER_STATUS_META: Record<
   processing: {
     label: "در حال آماده‌سازی",
     tone: "info",
-    description: "سفارش در آتلیه بسته‌بندی و بازرسی می‌شود.",
+    description: "سفارش در بوتیک بسته‌بندی و بازرسی می‌شود.",
   },
   shipped: {
     label: "ارسال‌شده",
@@ -32,7 +32,7 @@ export const ORDER_STATUS_META: Record<
   cancelled: {
     label: "لغو‌شده",
     tone: "danger",
-    description: "سفارش توسط مشتری یا آتلیه لغو شده است.",
+    description: "سفارش توسط مشتری یا بوتیک لغو شده است.",
   },
   returned: {
     label: "مرجوع‌شده",

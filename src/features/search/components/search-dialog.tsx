@@ -143,7 +143,7 @@ export function SearchDialog({
             ref={inputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="جست‌وجو در آتلیه… مثلاً «پالتو کشمیر»"
+            placeholder="جست‌وجو در بوتیک… مثلاً «پالتو کشمیر»"
             className="h-9 flex-1 bg-transparent text-sm text-ivory outline-hidden placeholder:text-mute"
           />
           {loading ? (

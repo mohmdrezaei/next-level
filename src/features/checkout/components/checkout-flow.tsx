@@ -197,6 +197,8 @@ export function CheckoutFlow() {
             line1: form.line1,
             postalCode: form.postalCode,
           },
+          customerName: form.fullName,
+          customerPhone: form.phone,
           shippingMethod,
           paymentMethod: payment,
           couponCode: coupon?.code ?? null,
@@ -205,6 +207,11 @@ export function CheckoutFlow() {
 
       setPlacedTotal(order.total);
       setPlacedCode(order.code);
+      try {
+        const stored = JSON.parse(localStorage.getItem("nextlevel_placed_orders") || "[]");
+        stored.unshift(order);
+        localStorage.setItem("nextlevel_placed_orders", JSON.stringify(stored.slice(0, 20)));
+      } catch {}
       clear();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {

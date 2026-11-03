@@ -9,7 +9,7 @@ export default function AdminSettingsPage() {
       <AdminPageHeader
         eyebrow="SETTINGS"
         title="تنظیمات فروشگاه"
-        description="اطلاعات آتلیه، سیاست ارسال و مالیات، روش‌های پرداخت و پیش‌فرض‌های نمایش محصولات."
+        description="اطلاعات بوتیک، سیاست ارسال و مالیات، روش‌های پرداخت و پیش‌فرض‌های نمایش محصولات."
       />
 
       <SettingsForm />

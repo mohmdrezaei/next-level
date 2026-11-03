@@ -4,7 +4,7 @@ import { CheckoutFlow } from "@/features/checkout/components/checkout-flow";
 
 export const metadata: Metadata = {
   title: "تکمیل خرید",
-  description: "تکمیل اطلاعات ارسال، انتخاب روش پرداخت و ثبت نهایی سفارش در آتلیه Next Level.",
+  description: "تکمیل اطلاعات ارسال، انتخاب روش پرداخت و ثبت نهایی سفارش در بوتیک Next Level.",
 };
 
 export default function CheckoutPage() {

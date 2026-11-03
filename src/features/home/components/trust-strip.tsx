@@ -3,10 +3,10 @@ import { Marquee } from "@/components/shared/marquee";
 
 const ITEMS = [
   { icon: Truck, title: "ارسال رایگان", description: "برای سفارش‌های بالای ۵ میلیون تومان" },
-  { icon: RotateCcw, title: "بازگشت ۷ روزه", description: "بدون قید و شرط، با هزینه آتلیه" },
+  { icon: RotateCcw, title: "بازگشت ۷ روزه", description: "بدون قید و شرط، با هزینه بوتیک" },
   { icon: BadgeCheck, title: "اصالت پارچه", description: "دارای برگه اصالت و کد پیگیری" },
   { icon: Gem, title: "تیراژ محدود", description: "حداکثر ۸۰ قطعه از هر مدل" },
-  { icon: Package, title: "بسته‌بندی آتلیه", description: "جعبه سخت با کاور پارچه‌ای" },
+  { icon: Package, title: "بسته‌بندی بوتیک", description: "جعبه سخت با کاور پارچه‌ای" },
   { icon: Wallet, title: "پرداخت امن", description: "درگاه بانکی و کیف پول Next Level" },
 ];
 

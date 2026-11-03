@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const message = await submitContactMessage(body);
 
     return ok(
-      { ...message, message: "پیام شما ثبت شد. کارشناسان آتلیه به‌زودی پاسخ می‌دهند." },
+      { ...message, message: "پیام شما ثبت شد. کارشناسان بوتیک به‌زودی پاسخ می‌دهند." },
       undefined,
       201,
     );

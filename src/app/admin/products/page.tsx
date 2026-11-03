@@ -51,7 +51,7 @@ export default async function AdminProductsPage() {
       <AdminPageHeader
         eyebrow="CATALOGUE"
         title="مدیریت محصولات"
-        description="جست‌وجو، فیلتر، ویرایش و مدیریت موجودی قطعات آتلیه. تغییرات بلافاصله در فروشگاه اعمال می‌شود."
+        description="جست‌وجو، فیلتر، ویرایش و مدیریت موجودی قطعات بوتیک. تغییرات بلافاصله در فروشگاه اعمال می‌شود."
       >
         <Button asChild variant="gold" size="sm">
           <Link href="/admin/products/new">

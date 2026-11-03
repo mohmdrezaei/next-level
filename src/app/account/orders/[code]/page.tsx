@@ -250,7 +250,7 @@ export default async function AccountOrderDetailPage({
             <span className="flex flex-col gap-1.5">
               <span className="text-xs text-ivory">پشتیبانی سفارش</span>
               <span className="text-[0.66rem] leading-6 text-mute">
-                در صورت وجود هر مشکل در سفارش، با شماره پشتیبانی آتلیه تماس بگیرید یا از بخش تماس با
+                در صورت وجود هر مشکل در سفارش، با شماره پشتیبانی بوتیک تماس بگیرید یا از بخش تماس با
                 ما پیام بگذارید.
               </span>
               <Button asChild variant="ghost" size="sm" className="w-fit">

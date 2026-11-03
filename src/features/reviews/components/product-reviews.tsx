@@ -54,7 +54,7 @@ export function ProductReviews({ product, reviews }: ProductReviewsProps) {
       });
       setShowForm(false);
       toast.success("نظر شما ثبت شد", {
-        description: "پس از تأیید کارشناس آتلیه، نظر شما در صفحه محصول نمایش داده می‌شود.",
+        description: "پس از تأیید کارشناس بوتیک، نظر شما در صفحه محصول نمایش داده می‌شود.",
       });
       router.refresh();
     } catch (error) {

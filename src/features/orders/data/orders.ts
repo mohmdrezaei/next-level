@@ -52,7 +52,7 @@ function buildTimeline(status: OrderStatus, createdAt: number, seed: string): Or
   const notes: Record<OrderStatus, string> = {
     pending: "سفارش ثبت شد و در انتظار پرداخت است.",
     paid: "پرداخت با موفقیت تأیید شد.",
-    processing: "سفارش در آتلیه بسته‌بندی و بازرسی شد.",
+    processing: "سفارش در بوتیک بسته‌بندی و بازرسی شد.",
     shipped: "سفارش تحویل پست پیشتاز شد.",
     delivered: "سفارش تحویل مشتری شد.",
     cancelled: "سفارش لغو شد و مبلغ بازگشت داده شد.",

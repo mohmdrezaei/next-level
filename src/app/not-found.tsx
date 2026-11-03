@@ -20,7 +20,7 @@ export default function NotFound() {
         <div className="flex flex-col gap-3">
           <span className="tnum text-[0.7rem] tracking-[0.3em] text-gold/85">۴۰۴</span>
           <h1 className="text-2xl font-semibold tracking-tight text-ivory sm:text-3xl">
-            این صفحه در آتلیه پیدا نشد
+            این صفحه در بوتیک پیدا نشد
           </h1>
           <p className="text-xs leading-7 text-smoke">
             ممکن است نشانی تغییر کرده باشد یا قطعه‌ای که دنبالش بودید از فروشگاه خارج شده باشد.

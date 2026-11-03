@@ -12,7 +12,7 @@ interface ProductShowcaseProps {
 }
 
 const TABS = [
-  { value: "featured", label: "منتخب آتلیه" },
+  { value: "featured", label: "منتخب بوتیک" },
   { value: "newest", label: "تازه رسیده‌ها" },
   { value: "bestsellers", label: "پرفروش‌ترین‌ها" },
 ] as const;

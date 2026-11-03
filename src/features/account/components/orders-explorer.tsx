@@ -24,10 +24,26 @@ const TABS: { value: TabKey; label: string }[] = [
 export function OrdersExplorer({ orders }: { orders: Order[] }) {
   const [tab, setTab] = React.useState<TabKey>("all");
   const [query, setQuery] = React.useState("");
+  const [allOrders, setAllOrders] = React.useState<Order[]>(orders);
+
+  React.useEffect(() => {
+    try {
+      const stored: Order[] = JSON.parse(localStorage.getItem("nextlevel_placed_orders") || "[]");
+      if (stored && Array.isArray(stored) && stored.length) {
+        const existingCodes = new Set(orders.map((o) => o.code));
+        const newOnes = stored.filter((o) => !existingCodes.has(o.code));
+        if (newOnes.length) {
+          setAllOrders([...newOnes, ...orders]);
+          return;
+        }
+      }
+    } catch {}
+    setAllOrders(orders);
+  }, [orders]);
 
   const filtered = React.useMemo(() => {
     const needle = normalize(query);
-    return orders.filter((order) => {
+    return allOrders.filter((order) => {
       if (tab === "active" && !isActiveOrder(order.status)) return false;
       if (tab === "delivered" && order.status !== "delivered") return false;
       if (tab === "cancelled" && !["cancelled", "returned"].includes(order.status)) return false;
@@ -36,13 +52,13 @@ export function OrdersExplorer({ orders }: { orders: Order[] }) {
       const haystack = [order.code, ...order.items.map((item) => item.name)].join(" ");
       return normalize(haystack).includes(needle);
     });
-  }, [orders, tab, query]);
+  }, [allOrders, tab, query]);
 
   const counts: Record<TabKey, number> = {
-    all: orders.length,
-    active: orders.filter((order) => isActiveOrder(order.status)).length,
-    delivered: orders.filter((order) => order.status === "delivered").length,
-    cancelled: orders.filter((order) => ["cancelled", "returned"].includes(order.status)).length,
+    all: allOrders.length,
+    active: allOrders.filter((order) => isActiveOrder(order.status)).length,
+    delivered: allOrders.filter((order) => order.status === "delivered").length,
+    cancelled: allOrders.filter((order) => ["cancelled", "returned"].includes(order.status)).length,
   };
 
   return (

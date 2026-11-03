@@ -114,7 +114,7 @@ export function SiteHeader({
                 <span className="flex flex-col text-start leading-tight">
                   <span className="text-[0.68rem] text-ivory">{user.name}</span>
                   <span className="text-[0.6rem] text-mute">
-                    {user.role === "admin" ? "مدیر آتلیه" : "حساب من"}
+                    {user.role === "admin" ? "مدیر بوتیک" : "حساب من"}
                   </span>
                 </span>
               </Link>

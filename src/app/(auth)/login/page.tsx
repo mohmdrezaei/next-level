@@ -4,7 +4,7 @@ import { LoginForm } from "@/features/auth/components/login-form";
 
 export const metadata: Metadata = {
   title: "ورود به حساب",
-  description: "ورود به حساب کاربری آتلیه Next Level برای پیگیری سفارش‌ها و مدیریت حساب.",
+  description: "ورود به حساب کاربری بوتیک Next Level برای پیگیری سفارش‌ها و مدیریت حساب.",
 };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {

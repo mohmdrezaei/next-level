@@ -116,7 +116,7 @@ export function SiteFooter() {
           </div>
 
           <p className="text-[0.68rem] text-mute">
-            طراحی و توسعه در آتلیه {SITE.name}
+            طراحی و توسعه در بوتیک {SITE.name}
           </p>
         </div>
       </div>

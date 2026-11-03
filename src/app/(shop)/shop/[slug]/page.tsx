@@ -90,7 +90,7 @@ export default async function ProductPage({ params }: PageProps<"/shop/[slug]">)
       {related.length ? (
         <div className="mt-20 border-t border-line pt-14">
           <SectionHeading
-            eyebrow="پیشنهاد آتلیه"
+            eyebrow="پیشنهاد بوتیک"
             title="قطعاتی که با این انتخاب هماهنگ‌اند"
             description="بر اساس دسته‌بندی، پالت رنگ و محدوده قیمت این قطعه پیشنهاد شده‌اند."
             className="mb-10"

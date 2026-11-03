@@ -5,7 +5,7 @@ import { allProducts } from "@/features/products/lib/live-selectors";
 
 export const metadata: Metadata = {
   title: "علاقه‌مندی‌ها",
-  description: "قطعاتی که در آتلیه Next Level ذخیره کرده‌اید.",
+  description: "قطعاتی که در بوتیک Next Level ذخیره کرده‌اید.",
 };
 
 export default async function WishlistPage() {

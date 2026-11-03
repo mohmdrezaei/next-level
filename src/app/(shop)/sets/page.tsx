@@ -10,7 +10,7 @@ import { toPersianDigits } from "@/lib/format";
 export const metadata: Metadata = {
   title: "ست‌های کامل",
   description:
-    "ست‌های آماده آتلیه Next Level: ترکیب هماهنگ کتانی، شلوار، پیراهن و لایه رویی با تخفیف مجموعه‌ای.",
+    "ست‌های آماده بوتیک Next Level: ترکیب هماهنگ کتانی، شلوار، پیراهن و لایه رویی با تخفیف مجموعه‌ای.",
 };
 
 export default async function SetsPage() {
@@ -41,7 +41,7 @@ export default async function SetsPage() {
                 ست‌های کامل Next Level
               </h1>
               <p className="text-xs leading-7 text-smoke sm:text-sm sm:leading-8">
-                هر ست سه یا چهار قطعه از آتلیه است که رنگ، جنس و فرم‌شان با هم هماهنگ شده‌اند.
+                هر ست سه یا چهار قطعه از بوتیک است که رنگ، جنس و فرم‌شان با هم هماهنگ شده‌اند.
                 می‌توانید کل ست را یک‌جا با تخفیف مجموعه‌ای بخرید یا قطعات را جداگانه انتخاب کنید.
               </p>
             </Reveal>
@@ -61,7 +61,7 @@ export default async function SetsPage() {
         <SectionHeading
           eyebrow="FEATURED"
           title="ست‌های منتخب این فصل"
-          description="پرطرفدارترین ترکیب‌های آتلیه در فصل جاری."
+          description="پرطرفدارترین ترکیب‌های بوتیک در فصل جاری."
         />
 
         <StaggerGroup className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">

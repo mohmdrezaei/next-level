@@ -31,7 +31,7 @@ export function ProductGrid({
       <EmptyState
         icon={<PackageSearch />}
         title="محصولی با این مشخصات پیدا نشد"
-        description="فیلترها را تغییر دهید یا همه محصولات آتلیه را مرور کنید."
+        description="فیلترها را تغییر دهید یا همه محصولات بوتیک را مرور کنید."
         action={emptyAction ?? { label: "مشاهده همه محصولات", href: "/shop" }}
       />
     );

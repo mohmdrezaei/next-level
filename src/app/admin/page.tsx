@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
     <div className="flex flex-col gap-9">
       <AdminPageHeader
         eyebrow="OVERVIEW"
-        title="نمای کلی آتلیه"
+        title="نمای کلی بوتیک"
         description={`عملکرد فروش، وضعیت موجودی و آخرین سفارش‌ها. میانگین امتیاز محصولات ${toPersianDigits(
           avgRating.toFixed(1),
         )} از ۵ است.`}

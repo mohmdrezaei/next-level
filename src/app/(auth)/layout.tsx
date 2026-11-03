@@ -54,7 +54,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               {SITE.latinName} ATELIER
             </span>
             <h2 className="max-w-md text-2xl font-semibold leading-relaxed tracking-tight text-ivory">
-              عضویت در آتلیه، دسترسی به قطعاتی که پیش از انتشار تمام می‌شوند.
+              عضویت در بوتیک، دسترسی به قطعاتی که پیش از انتشار تمام می‌شوند.
             </h2>
             <p className="max-w-md text-xs leading-7 text-smoke">
               با ساخت حساب، سفارش‌های خود را پیگیری کنید، نشانی‌ها را ذخیره کنید و از تخفیف‌های

@@ -298,7 +298,7 @@ async function seedUsers(): Promise<void> {
   await db.insert(users).values([
     {
       id: "u-admin",
-      name: "مدیر آتلیه",
+      name: "مدیر بوتیک",
       email: ADMIN_CREDENTIALS.email,
       phone: "09120000001",
       role: "admin",

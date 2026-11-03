@@ -10,13 +10,13 @@ import { SITE, SOCIAL_LINKS } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "تماس با ما",
   description:
-    "راه‌های تماس با آتلیه Next Level: تلفن، ایمیل، نشانی بوتیک و فرم پیام آنلاین برای پشتیبانی و مشاوره خرید.",
+    "راه‌های تماس با بوتیک Next Level: تلفن، ایمیل، نشانی بوتیک و فرم پیام آنلاین برای پشتیبانی و مشاوره خرید.",
 };
 
 const CHANNELS = [
   {
     icon: Phone,
-    title: "تلفن آتلیه",
+    title: "تلفن بوتیک",
     value: SITE.phone,
     hint: SITE.workingHours,
     href: `tel:${SITE.phoneRaw}`,
@@ -54,7 +54,7 @@ export default function ContactPage() {
           CONTACT
         </span>
         <h1 className="text-2xl font-semibold tracking-tight text-ivory sm:text-3xl">
-          تماس با آتلیه
+          تماس با بوتیک
         </h1>
         <p className="max-w-2xl text-xs leading-7 text-smoke sm:text-sm">
           برای مشاوره سایز، پیگیری سفارش، درخواست مرجوعی یا همکاری در فروش عمده، از راه‌های زیر با ما

@@ -30,7 +30,7 @@ export function EditorialSplit() {
           <div className="relative overflow-hidden rounded-2xl border border-ivory/10">
             <img
               src="https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1200&q=85"
-              alt="آتلیه دوخت Next Level"
+              alt="بوتیک دوخت Next Level"
               loading="lazy"
               className="media-natural aspect-4/5 w-full object-cover"
             />
@@ -57,7 +57,7 @@ export function EditorialSplit() {
           <Reveal>
             <span className="inline-flex items-center gap-2.5 text-[0.68rem] tracking-[0.28em] text-gold/85">
               <span className="h-px w-7 bg-gold/45" />
-              فلسفه آتلیه
+              فلسفه بوتیک
             </span>
           </Reveal>
 
@@ -72,7 +72,7 @@ export function EditorialSplit() {
             <p className="max-w-xl text-sm leading-8 text-smoke">
               در Next Level، سرعت تولید را فدای کیفیت نمی‌کنیم. هر قطعه از انتخاب پارچه تا آخرین بخیه،
               مسیر مشخصی را طی می‌کند و در پایان با نام خیاط و شماره سریال ثبت می‌شود. اگر جزئیاتی
-              مطابق استاندارد آتلیه نباشد، همان قطعه کنار گذاشته می‌شود.
+              مطابق استاندارد بوتیک نباشد، همان قطعه کنار گذاشته می‌شود.
             </p>
           </Reveal>
 

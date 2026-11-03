@@ -100,7 +100,7 @@ export function AdminTopbar({ user }: { user: SessionUser }) {
                   <InitialsAvatar name={user.name} accent={user.accent} className="size-8" />
                   <span className="hidden flex-col text-start leading-tight sm:flex">
                     <span className="text-[0.68rem] text-ivory">{user.name}</span>
-                    <span className="text-[0.6rem] text-mute">مدیر آتلیه</span>
+                    <span className="text-[0.6rem] text-mute">مدیر بوتیک</span>
                   </span>
                 </button>
               </DropdownMenuTrigger>

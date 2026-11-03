@@ -37,7 +37,7 @@ export function NewsletterForm() {
   return (
     <div className="flex flex-col gap-3">
       <span className="text-[0.68rem] tracking-[0.18em] text-gold/85">
-        خبرنامه آتلیه
+        خبرنامه بوتیک
       </span>
       <p className="text-xs leading-6 text-mute">
         از انتشار ست‌های جدید و قطعات تیراژ محدود زودتر از همه باخبر شوید.

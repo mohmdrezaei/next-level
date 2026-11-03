@@ -4,7 +4,7 @@ import { CartPageContent } from "@/features/cart/components/cart-page-content";
 
 export const metadata: Metadata = {
   title: "سبد خرید",
-  description: "مرور کالاهای انتخابی، اعمال کد تخفیف و ادامه فرآیند خرید در آتلیه Next Level.",
+  description: "مرور کالاهای انتخابی، اعمال کد تخفیف و ادامه فرآیند خرید در بوتیک Next Level.",
 };
 
 export default function CartPage() {

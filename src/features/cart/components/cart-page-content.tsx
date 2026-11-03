@@ -234,7 +234,7 @@ export function CartPageContent() {
           <ul className="flex flex-col gap-2.5 border-t border-line pt-4 text-[0.65rem] text-mute">
             <li>بازرسی کیفی و بسته‌بندی اختصاصی پیش از ارسال</li>
             <li>امکان بازگشت کالا تا ۷ روز پس از دریافت</li>
-            <li>پشتیبانی تلفنی در ساعات کاری آتلیه</li>
+            <li>پشتیبانی تلفنی در ساعات کاری بوتیک</li>
           </ul>
         </div>
       </aside>

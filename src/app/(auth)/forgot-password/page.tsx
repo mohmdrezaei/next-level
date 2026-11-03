@@ -6,7 +6,7 @@ import { SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "بازیابی رمز عبور",
-  description: "بازیابی رمز عبور حساب کاربری آتلیه Next Level.",
+  description: "بازیابی رمز عبور حساب کاربری بوتیک Next Level.",
 };
 
 export default function ForgotPasswordPage() {
@@ -21,7 +21,7 @@ export default function ForgotPasswordPage() {
           بازیابی رمز عبور
         </h1>
         <p className="text-xs leading-7 text-smoke">
-          برای بازنشانی رمز عبور، با پشتیبانی آتلیه تماس بگیرید. پس از احراز هویت، رمز جدید برای شما
+          برای بازنشانی رمز عبور، با پشتیبانی بوتیک تماس بگیرید. پس از احراز هویت، رمز جدید برای شما
           تنظیم می‌شود.
         </p>
       </header>

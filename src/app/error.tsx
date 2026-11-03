@@ -33,7 +33,7 @@ export default function GlobalError({
             خطایی در بارگذاری صفحه رخ داد
           </h1>
           <p className="text-xs leading-7 text-smoke">
-            می‌توانید یک‌بار دیگر تلاش کنید. اگر مشکل ادامه داشت، با پشتیبانی آتلیه تماس بگیرید.
+            می‌توانید یک‌بار دیگر تلاش کنید. اگر مشکل ادامه داشت، با پشتیبانی بوتیک تماس بگیرید.
           </p>
           {error.digest ? (
             <span className="tnum text-[0.64rem] text-mute">کد خطا: {error.digest}</span>

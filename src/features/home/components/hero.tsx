@@ -11,7 +11,7 @@ import { SITE } from "@/lib/constants";
 const STATS = [
   { value: "۲۴٪", label: "پشم و کشمیر ایتالیایی" },
   { value: "۴۸ ساعت", label: "بازرسی و بسته‌بندی هر سفارش" },
-  { value: "۱۲ سال", label: "تجربه دوخت در آتلیه" },
+  { value: "۱۲ سال", label: "تجربه دوخت در بوتیک" },
 ];
 
 export function Hero() {
@@ -67,7 +67,7 @@ export function Hero() {
             className="max-w-lg text-sm leading-8 text-smoke sm:text-[0.95rem]"
           >
             {SITE.shortDescription} هر قطعه در تیراژ محدود تولید، پیش از ارسال بازرسی و در
-            بسته‌بندی اختصاصی آتلیه تحویل داده می‌شود.
+            بسته‌بندی اختصاصی بوتیک تحویل داده می‌شود.
           </motion.p>
 
           <motion.div

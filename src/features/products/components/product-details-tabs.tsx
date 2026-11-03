@@ -84,7 +84,7 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
             <AccordionItem key={highlight} value={`item-${index}`}>
               <AccordionTrigger>{highlight}</AccordionTrigger>
               <AccordionContent>
-                این ویژگی در مرحله کنترل کیفیت آتلیه به‌صورت جداگانه بررسی می‌شود و روی برگه
+                این ویژگی در مرحله کنترل کیفیت بوتیک به‌صورت جداگانه بررسی می‌شود و روی برگه
                 شناسنامه قطعه ثبت می‌گردد.
               </AccordionContent>
             </AccordionItem>

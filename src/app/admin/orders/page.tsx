@@ -21,7 +21,7 @@ export default async function AdminOrdersPage() {
   const stats = [
     { label: "کل سفارش‌ها", value: formatNumber(orders.length), hint: "از ابتدای فعالیت", icon: ShoppingBag },
     { label: "درآمد تأییدشده", value: `${formatCompactPrice(revenue)} تومان`, hint: "سفارش‌های پرداخت‌شده", icon: Wallet },
-    { label: "در حال پردازش", value: toPersianDigits(open), hint: "نیازمند اقدام آتلیه", icon: RefreshCcw },
+    { label: "در حال پردازش", value: toPersianDigits(open), hint: "نیازمند اقدام بوتیک", icon: RefreshCcw },
     { label: "در مسیر ارسال", value: toPersianDigits(shipping), hint: "تحویل‌شده به پست", icon: Truck },
   ];
 
