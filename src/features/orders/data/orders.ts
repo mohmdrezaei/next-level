@@ -23,20 +23,17 @@ interface CustomerSeed {
 }
 
 const CUSTOMER_SEEDS: CustomerSeed[] = [
-  { id: "c-001", name: "آرش مهرآذین", phone: "0912 111 0001", email: "arash@example.com", city: "تهران", province: "تهران", line1: "خیابان ولیعصر، کوچه ناهید، پلاک ۱۲", postalCode: "1968765411", joinedDaysAgo: 640 },
-  { id: "c-002", name: "کامران راد", phone: "0912 111 0002", email: "kamran@example.com", city: "کرج", province: "البرز", line1: "میدان طالقانی، خیابان شهید بهشتی، پلاک ۴۵", postalCode: "3146789912", joinedDaysAgo: 512 },
-  { id: "c-003", name: "سهیل نوری", phone: "0912 111 0003", email: "soheil@example.com", city: "اصفهان", province: "اصفهان", line1: "خیابان چهارباغ بالا، برج نگین، طبقه ۷", postalCode: "8173456121", joinedDaysAgo: 431 },
-  { id: "c-004", name: "بابک تهرانی", phone: "0912 111 0004", email: "babak@example.com", city: "تهران", province: "تهران", line1: "سعادت‌آباد، بلوار دریا، پلاک ۸۸", postalCode: "1998763125", joinedDaysAgo: 388 },
-  { id: "c-005", name: "پویا صادقی", phone: "0912 111 0005", email: "pouya@example.com", city: "مشهد", province: "خراسان رضوی", line1: "بلوار وکیل‌آباد، کوچه ۱۲، پلاک ۳۴", postalCode: "9174567812", joinedDaysAgo: 302 },
-  { id: "c-006", name: "نیما فرهادی", phone: "0912 111 0006", email: "nima@example.com", city: "شیراز", province: "فارس", line1: "خیابان زند، ساختمان پارس، واحد ۵", postalCode: "7134567811", joinedDaysAgo: 275 },
-  { id: "c-007", name: "رضا کیانی", phone: "0912 111 0007", email: "reza@example.com", city: "تبریز", province: "آذربایجان شرقی", line1: "خیابان ولیعصر، نرسیده به میدان ساعت", postalCode: "5156789123", joinedDaysAgo: 240 },
-  { id: "c-008", name: "امیرحسین دلاور", phone: "0912 111 0008", email: "amir@example.com", city: "تهران", province: "تهران", line1: "پاسداران، بوستان دوم، پلاک ۱۹", postalCode: "1956783412", joinedDaysAgo: 198 },
-  { id: "c-009", name: "شاهین مرادی", phone: "0912 111 0009", email: "shahin@example.com", city: "رشت", province: "گیلان", line1: "خیابان معلم، کوچه گلستان، پلاک ۷", postalCode: "4156789124", joinedDaysAgo: 156 },
-  { id: "c-010", name: "محمد بهرامی", phone: "0912 111 0010", email: "mohammad@example.com", city: "یزد", province: "یزد", line1: "خیابان کاشانی، کوچه شهید صدوقی", postalCode: "8915673421", joinedDaysAgo: 120 },
-  { id: "c-011", name: "کیوان اسدی", phone: "0912 111 0011", email: "keyvan@example.com", city: "تهران", province: "تهران", line1: "جردن، خیابان گلفام، پلاک ۲۳", postalCode: "1934567812", joinedDaysAgo: 88 },
-  { id: "c-012", name: "فرید شریفی", phone: "0912 111 0012", email: "farid@example.com", city: "اهواز", province: "خوزستان", line1: "کیانپارس، خیابان اصلی، پلاک ۵۶", postalCode: "6156789123", joinedDaysAgo: 61 },
-  { id: "c-013", name: "سامان آذرنوش", phone: "0912 111 0013", email: "saman@example.com", city: "قم", province: "قم", line1: "بلوار امین، کوچه ۱۴، پلاک ۹", postalCode: "3715678912", joinedDaysAgo: 34 },
-  { id: "c-014", name: "هومن پارسا", phone: "0912 111 0014", email: "hooman@example.com", city: "تهران", province: "تهران", line1: "نیاوران، خیابان شهید باهنر، پلاک ۴۱", postalCode: "1963458712", joinedDaysAgo: 12 },
+  {
+    id: "c-001",
+    name: "آرش مهرآذین",
+    phone: "09120000000",
+    email: "demo@nextlevel.test",
+    city: "تهران",
+    province: "تهران",
+    line1: "خیابان ولیعصر، نرسیده به توانیر، پلاک ۱۲",
+    postalCode: "1968765411",
+    joinedDaysAgo: 120,
+  },
 ];
 
 const STATUS_BY_AGE: { maxDays: number; status: OrderStatus }[] = [
@@ -195,10 +192,10 @@ export const DEMO_ADDRESSES: Address[] = [
     id: "addr-1",
     title: "خانه",
     fullName: "آرش مهرآذین",
-    phone: "0912 111 0001",
+    phone: "09120000000",
     province: "تهران",
     city: "تهران",
-    line1: "خیابان ولیعصر، کوچه ناهید، پلاک ۱۲، طبقه دوم",
+    line1: "خیابان ولیعصر، نرسیده به توانیر، پلاک ۱۲، طبقه دوم",
     postalCode: "1968765411",
     isDefault: true,
   },
@@ -206,7 +203,7 @@ export const DEMO_ADDRESSES: Address[] = [
     id: "addr-2",
     title: "دفتر کار",
     fullName: "آرش مهرآذین",
-    phone: "0912 111 0001",
+    phone: "09120000000",
     province: "تهران",
     city: "تهران",
     line1: "میدان ونک، برج نگین، طبقه ۹، واحد ۹۰۴",
