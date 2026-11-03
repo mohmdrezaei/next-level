@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, TrendingUp, X } from "lucide-react";
+import { Layers, Loader2, Search, TrendingUp, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Dialog,
@@ -20,7 +20,9 @@ import { formatNumber } from "@/lib/format";
 import { mediaClassFor } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/features/products/data/catalog";
+import { apiFetch } from "@/lib/api-client";
 import type { Product } from "@/features/products/types";
+import type { ProductSet } from "@/features/sets/types";
 
 const SUGGESTIONS = ["پالتو", "پیراهن آکسفورد", "بلیزر", "کفش چرم", "بافت مرینو", "کیف چرم"];
 
@@ -39,10 +41,39 @@ export function SearchDialog({
   const [query, setQuery] = React.useState("");
   const router = useRouter();
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const [apiResults, setApiResults] = React.useState<{ products: Product[]; sets: ProductSet[] } | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const needle = query.trim();
+    if (!needle) {
+      setApiResults(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    const timer = window.setTimeout(async () => {
+      try {
+        const data = await apiFetch<{ query: string; products: Product[]; sets: ProductSet[] }>(
+          "/api/search",
+          { query: { q: needle } },
+        );
+        setApiResults(data ? { products: data.products ?? [], sets: data.sets ?? [] } : null);
+      } catch {
+        // Fall back to client filtering
+      } finally {
+        setLoading(false);
+      }
+    }, 220);
+
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
   const results = React.useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) return [];
+    if (apiResults?.products && apiResults.products.length > 0) return apiResults.products.slice(0, 8);
     return products
       .filter((product) =>
         [product.name, product.latinName, product.shortDescription]
@@ -51,7 +82,8 @@ export function SearchDialog({
           .includes(needle),
       )
       .slice(0, 6);
-  }, [products, query]);
+  }, [products, query, apiResults]);
+  const setsResults = apiResults?.sets ?? [];
 
   React.useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -114,7 +146,9 @@ export function SearchDialog({
             placeholder="جست‌وجو در آتلیه… مثلاً «پالتو کشمیر»"
             className="h-9 flex-1 bg-transparent text-sm text-ivory outline-hidden placeholder:text-mute"
           />
-          {query ? (
+          {loading ? (
+            <Loader2 className="size-4 animate-spin text-gold" />
+          ) : query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
@@ -217,6 +251,33 @@ export function SearchDialog({
                   </motion.div>
                 ))}
               </AnimatePresence>
+
+              {setsResults.length > 0 ? (
+                <div className="mt-4 border-t border-line/60 pt-3">
+                  <span className="mb-2 flex items-center gap-1.5 text-[0.68rem] tracking-wide text-gold">
+                    <Layers className="size-3" />
+                    ست‌های هماهنگ ({formatNumber(setsResults.length)})
+                  </span>
+                  <div className="flex flex-col gap-1.5">
+                    {setsResults.slice(0, 3).map((set) => (
+                      <Link
+                        key={set.slug}
+                        href={`/sets/${set.slug}`}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-ivory/[0.05]"
+                      >
+                        <span className="flex flex-col">
+                          <span className="text-xs font-medium text-ivory">{set.title}</span>
+                          <span className="text-[0.65rem] text-mute">{set.subtitle}</span>
+                        </span>
+                        <span className="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[0.62rem] text-gold-soft">
+                          تخفیف ست
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               <Button
                 type="button"

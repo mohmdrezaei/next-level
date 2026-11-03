@@ -21,22 +21,52 @@ import {
   stockAlerts,
   topProducts,
 } from "@/features/admin/lib/metrics";
+import {
+  dashboard as fetchDashboard,
+  averageRating as getLiveAverageRating,
+} from "@/server/repositories/metrics";
 import { ORDER_STATUS_META } from "@/features/orders/lib/status";
 import { formatCompactPrice, formatNumber, formatRelative, toPersianDigits } from "@/lib/format";
 import { mediaClassFor } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import type { OrderStatus } from "@/features/orders/types";
 
-export default function AdminDashboardPage() {
-  const kpis = computeKpis();
-  const daily = revenueSeries(30);
-  const monthly = monthlyRevenueSeries(6);
-  const top = topProducts(5);
-  const orders = recentOrders(6);
-  const alerts = stockAlerts().slice(0, 5);
-  const categories = categoryBreakdown();
-  const statuses = statusDistribution();
+type DashboardData = Awaited<ReturnType<typeof fetchDashboard>>;
+
+export default async function AdminDashboardPage() {
+  let dashData: DashboardData;
+  let avgRating = 4.8;
+  try {
+    const [liveData, liveRating] = await Promise.all([fetchDashboard(), getLiveAverageRating()]);
+    dashData = liveData;
+    avgRating = liveRating || 4.8;
+  } catch {
+    dashData = {
+      kpis: computeKpis(),
+      daily: revenueSeries(30),
+      monthly: monthlyRevenueSeries(6),
+      top: topProducts(5),
+      recent: recentOrders(6),
+      alerts: stockAlerts().slice(0, 5),
+      categories: categoryBreakdown(),
+      statuses: statusDistribution(),
+    };
+    avgRating = averageRating();
+  }
+
+  const { kpis, daily, monthly, top, categories, alerts, statuses } = dashData;
+  const orders = dashData.recent ?? [];
   const totalOrders = statuses.reduce((sum, item) => sum + item.count, 0);
+  /* dynamic dashData used below */
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="flex flex-col gap-9">
@@ -44,7 +74,7 @@ export default function AdminDashboardPage() {
         eyebrow="OVERVIEW"
         title="نمای کلی آتلیه"
         description={`عملکرد فروش، وضعیت موجودی و آخرین سفارش‌ها. میانگین امتیاز محصولات ${toPersianDigits(
-          averageRating().toFixed(1),
+          avgRating.toFixed(1),
         )} از ۵ است.`}
       >
         <Button asChild variant="subtle" size="sm">

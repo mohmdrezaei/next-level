@@ -37,10 +37,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Visual column */}
       <aside className="relative hidden overflow-hidden border-s border-line lg:block">
         <img
-          src="/art/auth-backdrop.svg"
+          src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1400&q=85"
           alt=""
           aria-hidden
-          className="media-invertible absolute inset-0 size-full object-cover"
+          className="media-natural absolute inset-0 size-full object-cover"
         />
         <span
           aria-hidden

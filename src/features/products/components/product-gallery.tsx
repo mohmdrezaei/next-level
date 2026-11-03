@@ -45,7 +45,13 @@ export function ProductGallery({ images, productName, badges }: ProductGalleryPr
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              style={{ transformOrigin: zoomOrigin }}
+              style={{ transformOrigin: zoomOrigin } as any}
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.src.includes("unsplash.com")) {
+                  target.src = "/products/monte-cashmere-coat-1.svg";
+                }
+              }}
               className={cn(
                 "absolute inset-0 size-full object-cover transition-transform duration-500 ease-[var(--ease-silk)]",
                 mediaClassFor(current?.src),

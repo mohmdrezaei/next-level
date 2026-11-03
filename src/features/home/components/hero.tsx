@@ -39,7 +39,7 @@ export function Hero() {
       </div>
 
       <div className="container-page grid items-center gap-14 pt-16 pb-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-24 lg:pb-28">
-        <motion.div style={{ y: contentY, opacity: contentOpacity }} className="flex flex-col gap-8">
+        <motion.div style={{ y: contentY, opacity: contentOpacity } as any} className="flex flex-col gap-8">
           <motion.span
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,10 +115,10 @@ export function Hero() {
           >
             <div className="relative overflow-hidden rounded-2xl border border-ivory/10 shadow-lift">
               <motion.img
-                src="/art/hero-main.svg"
+                src="/hero.jpg"
                 alt="ست‌های کامل پاییز و زمستان Next Level"
                 style={{ y: imageY }}
-                className="media-invertible aspect-4/5 w-full scale-110 object-cover"
+                className="media-natural aspect-4/5 w-full scale-110 object-cover"
               />
               <div className="overlay-scrim pointer-events-none absolute inset-0" />
             </div>

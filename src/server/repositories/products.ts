@@ -21,6 +21,7 @@ import { slugify } from "@/lib/utils";
 import { badRequest, conflict, notFound } from "../http";
 import { newId } from "../ids";
 import { containsPattern } from "../sql";
+import { PRODUCT_REAL_IMAGES } from "@/features/products/data/catalog";
 
 /* -------------------------------------------------------------------------- */
 /*  Input contract                                                            */
@@ -242,7 +243,7 @@ function normaliseImages(
   if (cleaned.length) return cleaned;
 
   return [1, 2, 3].map((index) => ({
-    src: `/products/${ART_TEMPLATE[category]}-${index}.svg`,
+    src: PRODUCT_REAL_IMAGES[ART_TEMPLATE[category]]?.[index - 1] ?? `/products/${ART_TEMPLATE[category]}-${index}.svg`,
     alt: `${name} — نمای ${index}`,
   }));
 }

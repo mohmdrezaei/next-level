@@ -1,54 +1,146 @@
 import { CATEGORY_MAP } from "@/features/products/data/catalog";
 import type { CategorySlug, Product } from "@/features/products/types";
 import * as products from "@/server/repositories/products";
+import * as staticSelectors from "@/features/products/lib/selectors";
 
 /**
  * Database-backed catalogue reads for **server components**.
  *
- * These are the async equivalents of `features/products/lib/selectors` (which
- * reads the static seed module). Everything here hits PostgreSQL, so anything
- * the admin panel changes shows up on the storefront immediately.
- *
- * Client components must receive products as props from a server parent.
+ * Hits PostgreSQL for live store mutations, with an automatic resilient
+ * fallback to the seeded catalogue if the database connection is cold or down.
  */
 
-export const allProducts = (): Promise<Product[]> => products.listProducts({ limit: 500 });
+export const allProducts = async (): Promise<Product[]> => {
+  try {
+    return await products.listProducts({ limit: 500 });
+  } catch {
+    return staticSelectors.allProducts();
+  }
+};
 
-export const getProductBySlug = (slug: string): Promise<Product | null> =>
-  products.getProductBySlug(slug);
+export const getProductBySlug = async (slug: string): Promise<Product | null> => {
+  try {
+    const res = await products.getProductBySlug(slug);
+    return res ?? staticSelectors.getProductBySlug(slug) ?? null;
+  } catch {
+    return staticSelectors.getProductBySlug(slug) ?? null;
+  }
+};
 
-export const getProductById = (id: string): Promise<Product | null> => products.getProductById(id);
+export const getProductById = async (id: string): Promise<Product | null> => {
+  try {
+    const res = await products.getProductById(id);
+    return res ?? staticSelectors.getProductById(id) ?? null;
+  } catch {
+    return staticSelectors.getProductById(id) ?? null;
+  }
+};
 
-export const getProductsByIds = (ids: string[]): Promise<Product[]> =>
-  products.getProductsByIds(ids);
+export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
+  try {
+    return await products.getProductsByIds(ids);
+  } catch {
+    return staticSelectors.getProductsByIds(ids);
+  }
+};
 
-export const getProductsBySlugs = (slugs: string[]): Promise<Product[]> =>
-  products.getProductsBySlugs(slugs);
+export const getProductsBySlugs = async (slugs: string[]): Promise<Product[]> => {
+  try {
+    return await products.getProductsBySlugs(slugs);
+  } catch {
+    return slugs
+      .map((slug) => staticSelectors.getProductBySlug(slug))
+      .filter((p): p is Product => Boolean(p));
+  }
+};
 
-export const getFeaturedProducts = (limit = 4): Promise<Product[]> =>
-  products.getFeaturedProducts(limit);
+export const getFeaturedProducts = async (limit = 4): Promise<Product[]> => {
+  try {
+    return await products.getFeaturedProducts(limit);
+  } catch {
+    return staticSelectors.getFeaturedProducts(limit);
+  }
+};
 
-export const getNewArrivals = (limit = 4): Promise<Product[]> => products.getNewArrivals(limit);
+export const getNewArrivals = async (limit = 4): Promise<Product[]> => {
+  try {
+    return await products.getNewArrivals(limit);
+  } catch {
+    return staticSelectors.getNewArrivals(limit);
+  }
+};
 
-export const getBestSellers = (limit = 4): Promise<Product[]> => products.getBestSellers(limit);
+export const getBestSellers = async (limit = 4): Promise<Product[]> => {
+  try {
+    return await products.getBestSellers(limit);
+  } catch {
+    return staticSelectors.getBestSellers(limit);
+  }
+};
 
-export const getOnSaleProducts = (limit = 4): Promise<Product[]> =>
-  products.getOnSaleProducts(limit);
+export const getOnSaleProducts = async (limit = 4): Promise<Product[]> => {
+  try {
+    return await products.getOnSaleProducts(limit);
+  } catch {
+    return staticSelectors.getOnSaleProducts(limit);
+  }
+};
 
-export const getProductsByCategory = (category: CategorySlug, limit = 4): Promise<Product[]> =>
-  products.getProductsByCategory(category, limit);
+export const getProductsByCategory = async (category: CategorySlug, limit = 4): Promise<Product[]> => {
+  try {
+    return await products.getProductsByCategory(category, limit);
+  } catch {
+    return staticSelectors.getProductsByCategory(category, limit);
+  }
+};
 
-export const getRelatedProducts = (product: Product, limit = 4): Promise<Product[]> =>
-  products.getRelatedProducts(product, limit);
+export const getRelatedProducts = async (product: Product, limit = 4): Promise<Product[]> => {
+  try {
+    return await products.getRelatedProducts(product, limit);
+  } catch {
+    return staticSelectors.getRelatedProducts(product, limit);
+  }
+};
 
-export const searchProducts = (query: string, limit = 6): Promise<Product[]> =>
-  products.searchProducts(query, limit);
+export const searchProducts = async (query: string, limit = 6): Promise<Product[]> => {
+  try {
+    return await products.searchProducts(query, limit);
+  } catch {
+    return staticSelectors.searchProducts(query, limit);
+  }
+};
 
-export const categoryCounts = (): Promise<Record<string, number>> => products.categoryCounts();
+export const categoryCounts = async (): Promise<Record<string, number>> => {
+  try {
+    return await products.categoryCounts();
+  } catch {
+    return staticSelectors.categoryCounts();
+  }
+};
 
-export const catalogueStats = () => products.catalogueStats();
+export const catalogueStats = async () => {
+  try {
+    return await products.catalogueStats();
+  } catch {
+    return staticSelectors.catalogueStats();
+  }
+};
 
-export const productFacets = () => products.productFacets();
+export const productFacets = async () => {
+  try {
+    return await products.productFacets();
+  } catch {
+    const list = staticSelectors.allProducts();
+    return {
+      sizes: ["S", "M", "L", "XL", "XXL", "40", "41", "42", "43", "44", "45", "ONE"],
+      colors: Array.from(new Set(list.flatMap((p) => p.colors.map((c) => c.name)))),
+      price: {
+        min: Math.min(...list.map((p) => p.price)),
+        max: Math.max(...list.map((p) => p.price)),
+      },
+    };
+  }
+};
 
 /** Categories are a static reference table — safe to read synchronously. */
 export const categoryBySlug = (slug: CategorySlug) => CATEGORY_MAP[slug];

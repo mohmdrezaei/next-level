@@ -4,6 +4,7 @@ import * as React from "react";
 import { Heart } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useWishlistStore } from "../store/wishlist-store";
+import { useMounted } from "@/lib/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/features/products/types";
 
@@ -24,10 +25,8 @@ export function WishlistButton({
   const active = useWishlistStore((state) =>
     state.items.some((item) => item.id === product.id),
   );
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useMounted();
   const reduce = useReducedMotion();
-
-  React.useEffect(() => setMounted(true), []);
 
   const handleClick = (event: React.MouseEvent) => {
     event.preventDefault();

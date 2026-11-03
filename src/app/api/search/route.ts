@@ -1,8 +1,10 @@
 import type { NextRequest } from "next/server";
 
 import { ok, readPagination, withApi } from "@/server/http";
-import { searchProducts } from "@/server/repositories/products";
-import { listSets } from "@/server/repositories/sets";
+import { searchProducts as dbSearchProducts } from "@/server/repositories/products";
+import { listSets as dbListSets } from "@/server/repositories/sets";
+import { searchProducts as staticSearchProducts } from "@/features/products/lib/selectors";
+import { SETS } from "@/features/sets/data/sets";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +23,15 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(pagination.perPage, 20);
 
     const [products, sets] = await Promise.all([
-      searchProducts(q, limit),
-      listSets({ q, limit: Math.ceil(limit / 2) }),
+      dbSearchProducts(q, limit).catch(() => staticSearchProducts(q, limit)),
+      dbListSets({ q, limit: Math.ceil(limit / 2) }).catch(() =>
+        SETS.filter(
+          (s) =>
+            s.title.includes(q) ||
+            s.latinTitle.toLowerCase().includes(q.toLowerCase()) ||
+            s.description.includes(q),
+        ).slice(0, Math.ceil(limit / 2)),
+      ),
     ]);
 
     return ok({ query: q, products, sets });

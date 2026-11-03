@@ -1,6 +1,16 @@
 import { requireApiAdmin } from "@/server/api-auth";
 import { ok, withApi } from "@/server/http";
 import { dashboard } from "@/server/repositories/metrics";
+import {
+  categoryBreakdown,
+  computeKpis,
+  monthlyRevenueSeries,
+  recentOrders,
+  revenueSeries,
+  statusDistribution,
+  stockAlerts,
+  topProducts,
+} from "@/features/admin/lib/metrics";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +22,19 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   return withApi(async () => {
     await requireApiAdmin();
-    return ok(await dashboard());
+    try {
+      return ok(await dashboard());
+    } catch {
+      return ok({
+        kpis: computeKpis(),
+        daily: revenueSeries(30),
+        monthly: monthlyRevenueSeries(6),
+        top: topProducts(5),
+        categories: categoryBreakdown(),
+        alerts: stockAlerts().slice(0, 5),
+        recent: recentOrders(6),
+        statuses: statusDistribution(),
+      });
+    }
   });
 }

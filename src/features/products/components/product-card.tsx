@@ -51,6 +51,12 @@ export function ProductCard({ product, className, compact = false }: ProductCard
             alt={product.images[0]?.alt ?? product.name}
             loading="lazy"
             decoding="async"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src.includes("unsplash.com")) {
+                target.src = `/products/${product.slug}-1.svg`;
+              }
+            }}
             className={cn(
               "absolute inset-0 size-full object-cover",
               mediaClassFor(product.images[0]?.src),
@@ -64,6 +70,12 @@ export function ProductCard({ product, className, compact = false }: ProductCard
             aria-hidden
             loading="lazy"
             decoding="async"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src.includes("unsplash.com")) {
+                target.src = `/products/${product.slug}-2.svg`;
+              }
+            }}
             className={cn("absolute inset-0 size-full object-cover", mediaClassFor(secondary))}
             animate={reduce ? undefined : { opacity: hovered ? 1 : 0, scale: hovered ? 1.03 : 1.09 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}

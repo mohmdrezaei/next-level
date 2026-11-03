@@ -15,6 +15,7 @@ import {
   getRelatedProducts,
 } from "@/features/products/lib/live-selectors";
 import { listReviews } from "@/server/repositories/reviews";
+import { getProductReviews } from "@/features/reviews/data/reviews";
 
 // The catalogue is editable at runtime, so product pages render on demand.
 export const dynamicParams = true;
@@ -46,7 +47,9 @@ export default async function ProductPage({ params }: PageProps<"/shop/[slug]">)
   const category = CATEGORY_MAP[product.category];
   const [related, reviews] = await Promise.all([
     getRelatedProducts(product, 4),
-    listReviews({ productId: product.id, limit: 24 }),
+    listReviews({ productId: product.id, limit: 24 }).catch(() =>
+      getProductReviews(product.id, product.reviewCount),
+    ),
   ]);
 
   return (

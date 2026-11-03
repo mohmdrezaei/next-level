@@ -37,7 +37,6 @@ import {
   type ShippingMethodId,
 } from "@/lib/constants";
 import { isActiveOrder } from "@/features/orders/lib/status";
-import { DEMO_ADDRESSES } from "@/features/orders/data/orders";
 import { apiFetch, ApiClientError } from "@/lib/api-client";
 import type { Order, OrderStatus } from "@/features/orders/types";
 
@@ -92,14 +91,57 @@ export function CheckoutFlow() {
   const [placedTotal, setPlacedTotal] = React.useState(0);
   const [submitting, setSubmitting] = React.useState(false);
 
+  const [savedAddresses, setSavedAddresses] = React.useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = React.useState<string | null>(null);
+
   const [form, setForm] = React.useState<AddressForm>({
-    fullName: DEMO_ADDRESSES[0]?.fullName ?? "",
-    phone: DEMO_ADDRESSES[0]?.phone ?? "",
-    province: DEMO_ADDRESSES[0]?.province ?? "تهران",
-    city: DEMO_ADDRESSES[0]?.city ?? "تهران",
-    line1: DEMO_ADDRESSES[0]?.line1 ?? "",
-    postalCode: DEMO_ADDRESSES[0]?.postalCode ?? "",
+    fullName: "",
+    phone: "",
+    province: "تهران",
+    city: "تهران",
+    line1: "",
+    postalCode: "",
   });
+
+  React.useEffect(() => {
+    let cancelled = false;
+    async function loadUser() {
+      try {
+        const me = await apiFetch<{ user: any; customerId: string | null }>("/api/auth/me");
+        if (cancelled || !me?.user) return;
+
+        setForm((prev) => ({
+          ...prev,
+          fullName: prev.fullName || me.user.name || "",
+          phone: prev.phone || me.user.phone || "",
+        }));
+
+        if (me.customerId) {
+          const list = await apiFetch<any[]>(`/api/customers/${me.customerId}/addresses`);
+          if (cancelled || !list || !list.length) return;
+          setSavedAddresses(list);
+          const def = list.find((a) => a.isDefault) ?? list[0];
+          if (def) {
+            setSelectedAddressId(def.id);
+            setForm({
+              fullName: def.fullName || me.user.name || "",
+              phone: def.phone || me.user.phone || "",
+              province: def.province || "تهران",
+              city: def.city || "تهران",
+              line1: def.line1 || "",
+              postalCode: def.postalCode || "",
+            });
+          }
+        }
+      } catch {
+        // Guest mode fallback
+      }
+    }
+    loadUser();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const totals = computeTotals({ lines, coupon, shippingMethod });
 
@@ -262,6 +304,41 @@ export function CheckoutFlow() {
                     اطلاعات گیرنده را وارد کنید. برای ویرایش نشانی‌های ذخیره‌شده به پنل کاربری بروید.
                   </p>
                 </div>
+
+                {savedAddresses.length > 0 && (
+                  <div className="flex flex-col gap-2 rounded-lg border border-gold/20 bg-gold/[0.04] p-3.5">
+                    <span className="text-[0.68rem] font-medium text-gold-soft">
+                      نشانی‌های ذخیره‌شده شما:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {savedAddresses.map((addr) => (
+                        <button
+                          key={addr.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedAddressId(addr.id);
+                            setForm({
+                              fullName: addr.fullName,
+                              phone: addr.phone,
+                              province: addr.province,
+                              city: addr.city,
+                              line1: addr.line1,
+                              postalCode: addr.postalCode,
+                            });
+                          }}
+                          className={cn(
+                            "rounded-md border px-3 py-1.5 text-xs transition-colors",
+                            selectedAddressId === addr.id
+                              ? "border-gold bg-gold/15 text-ivory"
+                              : "border-line bg-surface/80 text-smoke hover:border-ivory/20",
+                          )}
+                        >
+                          {addr.title || addr.city} — {addr.line1.slice(0, 24)}...
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="نام و نام خانوادگی" required error={errors.fullName}>

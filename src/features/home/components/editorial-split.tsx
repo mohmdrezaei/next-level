@@ -29,10 +29,10 @@ export function EditorialSplit() {
         <Reveal className="relative">
           <div className="relative overflow-hidden rounded-2xl border border-ivory/10">
             <img
-              src="/art/editorial-atelier.svg"
+              src="https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1200&q=85"
               alt="آتلیه دوخت Next Level"
               loading="lazy"
-              className="media-invertible aspect-4/5 w-full object-cover"
+              className="media-natural aspect-4/5 w-full object-cover"
             />
             <div className="overlay-scrim pointer-events-none absolute inset-0" />
           </div>

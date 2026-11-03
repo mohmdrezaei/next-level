@@ -5,6 +5,16 @@ import { StaggerGroup, StaggerItem } from "@/components/shared/reveal";
 import { CATEGORIES } from "@/features/products/data/catalog";
 import { toPersianDigits } from "@/lib/format";
 
+const CATEGORY_IMAGES: Record<string, string> = {
+  outerwear: "https://images.unsplash.com/photo-1544923246-77307dd654cb?auto=format&fit=crop&w=900&q=80",
+  suits: "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=900&q=80",
+  shirts: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80",
+  knitwear: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=900&q=80",
+  trousers: "https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=900&q=80",
+  footwear: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=900&q=80",
+  accessories: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=80",
+};
+
 export function CategoryGrid({ counts }: { counts: Record<string, number> }) {
   return (
     <section className="container-page py-20 lg:py-28">
@@ -26,11 +36,11 @@ export function CategoryGrid({ counts }: { counts: Record<string, number> }) {
               className="group relative flex h-full min-h-40 flex-col justify-between overflow-hidden rounded-xl border border-line p-5 transition-colors duration-500 hover:border-ivory/20 lg:min-h-44"
             >
               <img
-                src={`/art/category-${category.slug}.svg`}
+                src={CATEGORY_IMAGES[category.slug] ?? `/art/category-${category.slug}.svg`}
                 alt=""
                 aria-hidden
                 loading="lazy"
-                className="media-invertible absolute inset-0 size-full object-cover opacity-80 transition-all duration-[1100ms] ease-[var(--ease-silk)] group-hover:scale-105 group-hover:opacity-100"
+                className="media-natural absolute inset-0 size-full object-cover opacity-80 transition-all duration-[1100ms] ease-[var(--ease-silk)] group-hover:scale-105 group-hover:opacity-100"
               />
               <span className="overlay-scrim absolute inset-0" />
 
