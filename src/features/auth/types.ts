@@ -6,6 +6,7 @@ export interface SessionUser {
   email: string;
   phone: string;
   role: UserRole;
+  customerId?: string;
   /** Deterministic accent used for the generated avatar. */
   accent: string;
 }

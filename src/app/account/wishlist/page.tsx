@@ -1,11 +1,16 @@
 import { WishlistPageContent } from "@/features/wishlist/components/wishlist-page-content";
 import { requireUser } from "@/features/auth/server/session";
 import { allProducts } from "@/features/products/lib/live-selectors";
+import { ensureCustomerForUser } from "@/server/repositories/users";
+import { listWishlist } from "@/server/repositories/wishlist";
+import { toWishlistItem } from "@/features/wishlist/store/wishlist-store";
 
 export const metadata = { title: "علاقه‌مندی‌ها" };
 
 export default async function AccountWishlistPage() {
-  await requireUser("/account/wishlist");
+  const user = await requireUser("/account/wishlist");
+  const customerId = (await ensureCustomerForUser(user.id)) || user.id;
+  const userWishlistProducts = await listWishlist(customerId);
   const products = await allProducts();
 
   return (
@@ -23,7 +28,11 @@ export default async function AccountWishlistPage() {
         </p>
       </header>
 
-      <WishlistPageContent products={products} />
+      <WishlistPageContent
+        products={products}
+        initialItems={userWishlistProducts.map(toWishlistItem)}
+        userId={user.id}
+      />
     </div>
   );
 }

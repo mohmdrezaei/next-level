@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WishlistPageContent } from "@/features/wishlist/components/wishlist-page-content";
 import { allProducts } from "@/features/products/lib/live-selectors";
+import { getSession } from "@/features/auth/server/session";
+import { ensureCustomerForUser } from "@/server/repositories/users";
+import { listWishlist } from "@/server/repositories/wishlist";
+import { toWishlistItem } from "@/features/wishlist/store/wishlist-store";
 
 export const metadata: Metadata = {
   title: "علاقه‌مندی‌ها",
@@ -9,8 +13,15 @@ export const metadata: Metadata = {
 };
 
 export default async function WishlistPage() {
-  // Hand the catalogue down so the client list can resolve saved ids.
+  const user = await getSession();
   const products = await allProducts();
+
+  let initialItems;
+  if (user) {
+    const customerId = (await ensureCustomerForUser(user.id)) || user.id;
+    const userWishlistProducts = await listWishlist(customerId);
+    initialItems = userWishlistProducts.map(toWishlistItem);
+  }
 
   return (
     <div className="container-page py-10 lg:py-14">
@@ -26,7 +37,7 @@ export default async function WishlistPage() {
         </h1>
       </header>
 
-      <WishlistPageContent products={products} />
+      <WishlistPageContent products={products} initialItems={initialItems} userId={user?.id} />
     </div>
   );
 }

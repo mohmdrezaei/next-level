@@ -387,8 +387,14 @@ export async function listOrdersForUser(userId: string): Promise<Order[]> {
     // DB offline
   }
 
-  // 3. For demo user or if no orders found, include DEMO_ORDERS
-  if (userId === "u_demo" || matched.length === 0) {
+  // 3. For demo user only, include DEMO_ORDERS if not already matched
+  const isDemoUser =
+    userId === "u_demo" ||
+    customerId === "c-001" ||
+    userPhone === "09120000000" ||
+    userEmail === "demo@nextlevel.test";
+
+  if (isDemoUser) {
     for (const o of DEMO_ORDERS) {
       if (!seenCodes.has(o.code)) {
         seenCodes.add(o.code);

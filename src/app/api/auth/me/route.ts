@@ -15,7 +15,7 @@ export async function GET() {
     const user = await getApiUser();
     if (!user) return ok({ user: null, customerId: null, wishlistCount: 0 });
 
-    const customerId = user.role === "admin" ? null : await ensureCustomerForUser(user.id);
+    const customerId = (await ensureCustomerForUser(user.id)) || user.id;
 
     return ok({
       user,

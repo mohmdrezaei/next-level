@@ -18,8 +18,7 @@ export const dynamic = "force-dynamic";
 async function currentCustomerId(): Promise<string> {
   const user = await requireApiUser();
   const customerId = await ensureCustomerForUser(user.id);
-  if (!customerId) throw badRequest("حساب کاربری به مشتری متصل نیست.");
-  return customerId;
+  return customerId || user.id;
 }
 
 /**

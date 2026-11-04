@@ -22,6 +22,7 @@ import { getOrderByCode } from "@/server/repositories/orders";
 import { isActiveOrder } from "@/features/orders/lib/status";
 import { PAYMENT_METHODS, SHIPPING_METHODS } from "@/lib/constants";
 import { formatDateTime, formatNumber, toPersianDigits } from "@/lib/format";
+import { cleanPhone } from "@/server/phone";
 
 export async function generateMetadata({ params }: PageProps<"/account/orders/[code]">) {
   const { code } = await params;
@@ -32,10 +33,24 @@ export default async function AccountOrderDetailPage({
   params,
 }: PageProps<"/account/orders/[code]">) {
   const { code } = await params;
-  await requireUser("/account/orders");
+  const user = await requireUser("/account/orders");
 
   const order = await getOrderByCode(code);
   if (!order) notFound();
+
+  // Ensure shopper can only view their own order
+  const userPhone = cleanPhone(user.phone);
+  const orderPhone = cleanPhone(order.customerPhone || order.address.phone);
+  const userEmail = user.email ? user.email.toLowerCase() : "";
+  const orderEmail = order.customerEmail ? order.customerEmail.toLowerCase() : "";
+
+  const isOwner =
+    user.role === "admin" ||
+    (user.customerId && order.customerId === user.customerId) ||
+    (userPhone && orderPhone && orderPhone === userPhone) ||
+    (userEmail && orderEmail && orderEmail === userEmail);
+
+  if (!isOwner) notFound();
 
   const shipping = SHIPPING_METHODS.find((method) => method.id === order.shippingMethod);
   const payment = PAYMENT_METHODS.find((method) => method.id === order.paymentMethod);

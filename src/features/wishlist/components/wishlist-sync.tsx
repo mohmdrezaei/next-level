@@ -10,14 +10,14 @@ interface MeResponse {
 }
 
 /**
- * Headless bridge between the local wishlist and `/api/wishlist`.
+ * Headless bridge between the user's isolated wishlist and `/api/wishlist`.
  *
- * Guests stay local-only. When a session is detected the component turns the
- * server mirror on and merges the products saved on the server into the local
- * list, so a shopper's favourites follow them across devices.
+ * Guests use guest storage (`__guest__`). When an authenticated session is detected,
+ * the component switches the active store to that specific user and populates their
+ * server-backed list.
  */
 export function WishlistSync() {
-  const hydrate = useWishlistStore((state) => state.hydrate);
+  const setUser = useWishlistStore((state) => state.setUser);
 
   React.useEffect(() => {
     let active = true;
@@ -25,14 +25,24 @@ export function WishlistSync() {
     (async () => {
       try {
         const me = await apiFetch<MeResponse>("/api/auth/me");
-        if (!active || !me.user) return;
+        if (!active) return;
 
-        setWishlistRemote(true);
-
-        const products = await apiFetch<Product[]>("/api/wishlist");
-        if (active) hydrate(products.map(toWishlistItem));
+        if (me?.user?.id) {
+          setWishlistRemote(true);
+          const products = await apiFetch<Product[]>("/api/wishlist");
+          if (active) {
+            setUser(me.user.id, Array.isArray(products) ? products.map(toWishlistItem) : []);
+          }
+        } else {
+          setWishlistRemote(false);
+          setUser(null);
+        }
       } catch {
-        // Guest, offline, or a transient error — the local list keeps working.
+        // Guest or offline
+        if (active) {
+          setWishlistRemote(false);
+          setUser(null);
+        }
       }
     })();
 
@@ -40,7 +50,7 @@ export function WishlistSync() {
       active = false;
       setWishlistRemote(false);
     };
-  }, [hydrate]);
+  }, [setUser]);
 
   return null;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { Heart, ShoppingBag, Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -7,7 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Price } from "@/components/shared/price";
-import { useWishlistStore } from "../store/wishlist-store";
+import { useWishlistStore, type WishlistItem } from "../store/wishlist-store";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { toCartLine } from "@/features/cart/types";
@@ -21,13 +22,28 @@ import type { Product } from "@/features/products/types";
  * server page passes in from the live catalogue — a client component cannot
  * reach the runtime store itself.
  */
-export function WishlistPageContent({ products = [] }: { products?: Product[] }) {
+export function WishlistPageContent({
+  products = [],
+  initialItems,
+  userId,
+}: {
+  products?: Product[];
+  initialItems?: WishlistItem[];
+  userId?: string;
+}) {
   const mounted = useMounted();
   const items = useWishlistStore((state) => state.items);
   const remove = useWishlistStore((state) => state.remove);
   const clear = useWishlistStore((state) => state.clear);
   const addLine = useCartStore((state) => state.addLine);
   const openDrawer = useCartStore((state) => state.openDrawer);
+  const setUser = useWishlistStore((state) => state.setUser);
+
+  React.useEffect(() => {
+    if (userId !== undefined) {
+      setUser(userId, initialItems);
+    }
+  }, [userId, initialItems, setUser]);
 
   if (!mounted) {
     return (

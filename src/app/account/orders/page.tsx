@@ -35,7 +35,7 @@ export default async function AccountOrdersPage() {
         </Button>
       </header>
 
-      <OrdersExplorer orders={orders} />
+      <OrdersExplorer orders={orders} user={user} />
     </div>
   );
 }

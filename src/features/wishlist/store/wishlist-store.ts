@@ -33,11 +33,13 @@ export function toWishlistItem(product: Product): WishlistItem {
 }
 
 interface WishlistState {
+  currentUserId: string | null;
+  itemsByUser: Record<string, WishlistItem[]>;
   items: WishlistItem[];
+  setUser: (userId: string | null, incoming?: WishlistItem[]) => void;
   toggle: (product: Product) => boolean;
   remove: (id: string) => void;
   clear: () => void;
-  /** Merge products saved on the server into the local list. */
   hydrate: (incoming: WishlistItem[]) => void;
 }
 
@@ -45,12 +47,6 @@ interface WishlistState {
 /*  Server mirror                                                             */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Guests keep their list in `localStorage` only. Once `WishlistSync` confirms a
- * session, every mutation is also mirrored to `/api/wishlist` so the list
- * follows the shopper across devices. Failures are swallowed — the local list
- * stays authoritative for the UI.
- */
 let remoteEnabled = false;
 
 export function setWishlistRemote(enabled: boolean): void {
@@ -65,36 +61,79 @@ function mirror(path: string, options: Parameters<typeof apiFetch>[1]): void {
 export const useWishlistStore = create<WishlistState>()(
   persist(
     (set, get) => ({
+      currentUserId: null,
+      itemsByUser: {},
       items: [],
 
+      setUser: (userId, incoming) => {
+        const userKey = userId || "__guest__";
+        set((state) => {
+          const userItems = incoming !== undefined ? incoming : (state.itemsByUser[userKey] ?? []);
+          return {
+            currentUserId: userId,
+            items: userItems,
+            itemsByUser: {
+              ...state.itemsByUser,
+              [userKey]: userItems,
+            },
+          };
+        });
+      },
+
       toggle: (product) => {
-        const exists = get().items.some((item) => item.id === product.id);
+        const userKey = get().currentUserId || "__guest__";
+        const currentItems = get().items;
+        const exists = currentItems.some((item) => item.id === product.id);
+        let nextItems: WishlistItem[];
+
         if (exists) {
-          set((state) => ({ items: state.items.filter((item) => item.id !== product.id) }));
+          nextItems = currentItems.filter((item) => item.id !== product.id);
           mirror("/api/wishlist", { method: "DELETE", query: { productId: product.id } });
-          return false;
+        } else {
+          nextItems = [toWishlistItem(product), ...currentItems];
+          mirror("/api/wishlist", { method: "POST", body: { productId: product.id } });
         }
-        set((state) => ({ items: [toWishlistItem(product), ...state.items] }));
-        mirror("/api/wishlist", { method: "POST", body: { productId: product.id } });
-        return true;
+
+        set((state) => ({
+          items: nextItems,
+          itemsByUser: { ...state.itemsByUser, [userKey]: nextItems },
+        }));
+
+        return !exists;
       },
 
       remove: (id) => {
-        set((state) => ({ items: state.items.filter((item) => item.id !== id) }));
+        const userKey = get().currentUserId || "__guest__";
+        const nextItems = get().items.filter((item) => item.id !== id);
+        set((state) => ({
+          items: nextItems,
+          itemsByUser: { ...state.itemsByUser, [userKey]: nextItems },
+        }));
         mirror("/api/wishlist", { method: "DELETE", query: { productId: id } });
       },
 
       clear: () => {
-        set({ items: [] });
+        const userKey = get().currentUserId || "__guest__";
+        set((state) => ({
+          items: [],
+          itemsByUser: { ...state.itemsByUser, [userKey]: [] },
+        }));
         mirror("/api/wishlist", { method: "DELETE", query: { all: 1 } });
       },
 
-      hydrate: (incoming) =>
+      hydrate: (incoming) => {
+        const userKey = get().currentUserId || "__guest__";
         set((state) => {
-          const known = new Set(state.items.map((item) => item.id));
+          const currentItems = state.itemsByUser[userKey] ?? [];
+          const known = new Set(currentItems.map((item) => item.id));
           const missing = incoming.filter((item) => !known.has(item.id));
-          return missing.length ? { items: [...state.items, ...missing] } : state;
-        }),
+          const nextItems = missing.length ? [...currentItems, ...missing] : currentItems;
+          return {
+            items: nextItems,
+            itemsByUser: { ...state.itemsByUser, [userKey]: nextItems },
+          };
+        });
+      },
     }),
     {
       name: "nextlevel.wishlist",

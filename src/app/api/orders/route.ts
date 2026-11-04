@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     // Link to customer ledger if user is signed in
     let customerId =
-      user && user.role !== "admin" ? await ensureCustomerForUser(user.id) : null;
+      user ? ((await ensureCustomerForUser(user.id)) || user.id) : null;
 
     const customerPhone = body.customerPhone || body.address.phone || user?.phone || "";
     const customerName = body.customerName || body.address.fullName || user?.name || "مشتری گرامی";

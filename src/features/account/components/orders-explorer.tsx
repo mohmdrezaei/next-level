@@ -10,7 +10,9 @@ import { OrderCard } from "./order-card";
 import { isActiveOrder } from "@/features/orders/lib/status";
 import { toPersianDigits } from "@/lib/format";
 import { normalize } from "@/features/products/lib/query";
+import { cleanPhone } from "@/server/phone";
 import type { Order } from "@/features/orders/types";
+import type { SessionUser } from "@/features/auth/types";
 
 type TabKey = "all" | "active" | "delivered" | "cancelled";
 
@@ -21,7 +23,7 @@ const TABS: { value: TabKey; label: string }[] = [
   { value: "cancelled", label: "لغو / مرجوع" },
 ];
 
-export function OrdersExplorer({ orders }: { orders: Order[] }) {
+export function OrdersExplorer({ orders, user }: { orders: Order[]; user?: SessionUser }) {
   const [tab, setTab] = React.useState<TabKey>("all");
   const [query, setQuery] = React.useState("");
   const [allOrders, setAllOrders] = React.useState<Order[]>(orders);
@@ -31,7 +33,22 @@ export function OrdersExplorer({ orders }: { orders: Order[] }) {
       const stored: Order[] = JSON.parse(localStorage.getItem("nextlevel_placed_orders") || "[]");
       if (stored && Array.isArray(stored) && stored.length) {
         const existingCodes = new Set(orders.map((o) => o.code));
-        const newOnes = stored.filter((o) => !existingCodes.has(o.code));
+        const userPhone = user?.phone ? cleanPhone(user.phone) : "";
+        const userEmail = user?.email ? user.email.toLowerCase() : "";
+        const userCustomerId = user?.customerId;
+
+        const isMine = (o: Order) => {
+          if (!user) return true;
+          const oPhone = cleanPhone(o.customerPhone || o.address?.phone);
+          const oEmail = o.customerEmail ? o.customerEmail.toLowerCase() : "";
+          return (
+            (userCustomerId && o.customerId === userCustomerId) ||
+            (userPhone && oPhone === userPhone) ||
+            (userEmail && oEmail === userEmail)
+          );
+        };
+
+        const newOnes = stored.filter((o) => isMine(o) && !existingCodes.has(o.code));
         if (newOnes.length) {
           setAllOrders([...newOnes, ...orders]);
           return;
@@ -39,7 +56,7 @@ export function OrdersExplorer({ orders }: { orders: Order[] }) {
       }
     } catch {}
     setAllOrders(orders);
-  }, [orders]);
+  }, [orders, user]);
 
   const filtered = React.useMemo(() => {
     const needle = normalize(query);
