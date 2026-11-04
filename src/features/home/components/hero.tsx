@@ -11,7 +11,7 @@ import { SITE } from "@/lib/constants";
 const STATS = [
   { value: "۲۴٪", label: "پشم و کشمیر ایتالیایی" },
   { value: "۴۸ ساعت", label: "بازرسی و بسته‌بندی هر سفارش" },
-  { value: "۱۲ سال", label: "تجربه دوخت در بوتیک" },
+  { value: "۱۲ سال", label: "سابقه تخصصی در مد و پوشاک" },
 ];
 
 export function Hero() {
@@ -51,7 +51,7 @@ export function Hero() {
           </motion.span>
 
           <h1 className="text-[2.1rem] font-semibold leading-[1.25] tracking-tight text-ivory sm:text-5xl lg:text-[3.4rem]">
-            <SplitText text="دوختِ دقیق،" delay={0.1} />
+            <SplitText text="تن‌خور بی‌نقص،" delay={0.1} />
             <br className="hidden sm:block" />
             <span className="gold-text">
               <SplitText text="برای مردی که" delay={0.28} />

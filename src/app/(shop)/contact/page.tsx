@@ -41,7 +41,7 @@ export default async function ContactPage() {
       icon: MapPin,
       title: "نشانی بوتیک",
       value: address,
-      hint: "امکان پرو حضوری و اصلاح دوخت",
+      hint: "امکان خرید حضوری و مشاوره استایل",
     },
     {
       icon: Clock,
@@ -139,7 +139,7 @@ export default async function ContactPage() {
                 <span className="text-[0.62rem] tracking-[0.2em] text-gold/85">BOUTIQUE</span>
                 <span className="text-sm text-ivory">بوتیک ولیعصر — تهران</span>
                 <span className="text-[0.66rem] text-smoke">
-                  برای پرو حضوری، پیش از مراجعه وقت خود را رزرو کنید.
+                  برای خرید حضوری و مشاهده کالکشن‌ها، در ساعات کاری پذیرای شما هستیم.
                 </span>
               </div>
             </div>

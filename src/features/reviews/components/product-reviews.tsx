@@ -162,7 +162,7 @@ export function ProductReviews({ product, reviews }: ProductReviewsProps) {
           </Field>
 
           <Field label="متن نظر" required hint="حداقل ۲۰ کاراکتر">
-            <Textarea name="body" placeholder="از کیفیت پارچه، دوخت و سایزبندی بنویسید…" required />
+            <Textarea name="body" placeholder="از کیفیت کالا، جنس، تن‌خور و سایزبندی بنویسید…" required />
           </Field>
 
           <div className="flex flex-wrap gap-3">

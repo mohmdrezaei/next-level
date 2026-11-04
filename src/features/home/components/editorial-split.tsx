@@ -1,19 +1,19 @@
 import Link from "next/link";
-import { ArrowLeft, Ruler, Scissors, Sparkles } from "lucide-react";
+import { ArrowLeft, Ruler, ShieldCheck, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/shared/reveal";
 import { Button } from "@/components/ui/button";
 import { AnimatedNumber } from "@/components/shared/animated-number";
 
 const PILLARS = [
   {
-    icon: Scissors,
-    title: "الگو و برش",
-    body: "هر مدل روی مانکن واقعی تنظیم می‌شود؛ حداقل سه نسخه آزمایشی پیش از تولید نهایی دوخته می‌شود.",
+    icon: ShieldCheck,
+    title: "طراحی و تن‌خور استاندارد",
+    body: "هر مدل با دقیق‌ترین استانداردهای فیت و ارگونومی اندام انتخاب می‌شود تا تن‌خوری شیک و راحت داشته باشد.",
   },
   {
     icon: Ruler,
     title: "پارچه منتخب",
-    body: "پارچه‌ها از کارخانه‌های ایتالیا، ژاپن و ترکیه تأمین می‌شوند و پیش از برش، تست رنگ‌ثباتی می‌شوند.",
+    body: "پوشاک از برترین برندها و کارخانجات نساجی تأمین شده و از نظر دوام الیاف و ثبات رنگ تضمین می‌شوند.",
   },
   {
     icon: Sparkles,
@@ -30,7 +30,7 @@ export function EditorialSplit() {
           <div className="relative overflow-hidden rounded-2xl border border-ivory/10">
             <img
               src="https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1200&q=85"
-              alt="بوتیک دوخت Next Level"
+              alt="بوتیک تخصصی پوشاک Next Level"
               loading="lazy"
               className="media-natural aspect-4/5 w-full object-cover"
             />
@@ -40,7 +40,7 @@ export function EditorialSplit() {
           <div className="glass absolute -bottom-6 right-6 flex items-center gap-5 rounded-xl px-5 py-4 shadow-lift">
             <div className="flex flex-col">
               <AnimatedNumber value={12} className="text-xl font-semibold text-ivory" />
-              <span className="text-[0.62rem] text-mute">سال تجربه دوخت</span>
+              <span className="text-[0.62rem] text-mute">سال سابقه تخصصی</span>
             </div>
             <span className="h-9 w-px bg-line" />
             <div className="flex flex-col">
@@ -48,7 +48,7 @@ export function EditorialSplit() {
                 <AnimatedNumber value={80} />
                 <span className="text-sm">٪</span>
               </span>
-              <span className="text-[0.62rem] text-mute">قطعات دوخت دستی</span>
+              <span className="text-[0.62rem] text-mute">تضمین اصالت و کیفیت</span>
             </div>
           </div>
         </Reveal>
@@ -63,16 +63,16 @@ export function EditorialSplit() {
 
           <Reveal delay={0.06}>
             <h2 className="text-2xl font-semibold leading-relaxed tracking-tight text-ivory sm:text-3xl">
-              ما لباس نمی‌فروشیم؛
-              <span className="gold-text"> قطعه‌ای می‌سازیم که سال‌ها بماند.</span>
+              پوشاکی با اصالت و ماندگار؛
+              <span className="gold-text"> استایلی برازنده برای مردان شیک‌پوش.</span>
             </h2>
           </Reveal>
 
           <Reveal delay={0.12}>
             <p className="max-w-xl text-sm leading-8 text-smoke">
-              در Next Level، سرعت تولید را فدای کیفیت نمی‌کنیم. هر قطعه از انتخاب پارچه تا آخرین بخیه،
-              مسیر مشخصی را طی می‌کند و در پایان با نام خیاط و شماره سریال ثبت می‌شود. اگر جزئیاتی
-              مطابق استاندارد بوتیک نباشد، همان قطعه کنار گذاشته می‌شود.
+              در Next Level، کیفیت ممتاز و اصالت حرف اول را می‌زند. هر مدل پیش از عرضه در کالکشن بوتیک،
+              از نظر جنس الیاف، تمیزی ساخت و فرم ایستایی بازرسی شده و با برگه اصالت ارسال می‌شود. اگر هرگونه
+              مغایرتی با سلیقه شما داشته باشد، تعویض آسان سایز و عودت کالا در خدمت شماست.
             </p>
           </Reveal>
 

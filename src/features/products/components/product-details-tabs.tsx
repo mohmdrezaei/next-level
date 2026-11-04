@@ -23,7 +23,7 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
           پارچه و نگهداری
         </TabsTrigger>
         <TabsTrigger variant="underline" value="features">
-          جزئیات دوخت
+          ویژگی‌های ساخت و تن‌خور
         </TabsTrigger>
         <TabsTrigger variant="underline" value="shipping">
           ارسال و بازگشت

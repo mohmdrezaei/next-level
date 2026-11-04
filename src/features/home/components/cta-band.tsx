@@ -21,18 +21,18 @@ export function CtaBand() {
           </span>
 
           <h2 className="mx-auto mt-6 max-w-2xl text-2xl font-semibold leading-relaxed tracking-tight text-ivory sm:text-3xl">
-            پرو کردن حضوری، اصلاح رایگان دوخت
+            خرید حضوری و آنلاین با ضمانت بازگشت
           </h2>
 
           <p className="mx-auto mt-4 max-w-xl text-xs leading-7 text-smoke sm:text-sm">
-            می‌توانید پیش از خرید، قطعات را در بوتیک پرو کنید. اگر نیاز به اصلاح جزئی دوخت
-            (قد آستین، کمر شلوار) باشد، خیاط‌های بوتیک بدون هزینه آن را انجام می‌دهند.
+            می‌توانید برای مشاهده و خرید کالاها به بوتیک مراجعه کنید یا به‌صورت آنلاین با اطمینان سفارش دهید.
+            تمامی سفارش‌ها با ضمانت اصالت، تعویض سریع سایز و بازگشت ۷ روزه ارسال می‌شوند.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button asChild variant="gold" size="lg">
               <Link href="/contact">
-                رزرو وقت پرو
+                اطلاعات تماس و آدرس بوتیک
                 <ArrowLeft className="size-4" />
               </Link>
             </Button>

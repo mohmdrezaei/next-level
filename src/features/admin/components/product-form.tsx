@@ -336,7 +336,7 @@ export function ProductForm({ product }: { product: Product | null }) {
               <Textarea
                 value={input.description}
                 onChange={(event) => set("description", event.target.value)}
-                placeholder="جزئیات پارچه، دوخت و کاربرد قطعه…"
+                placeholder="جزئیات متریال، مشخصات تن‌خور و کاربرد قطعه…"
                 className="min-h-32"
               />
             </Field>
@@ -489,11 +489,11 @@ export function ProductForm({ product }: { product: Product | null }) {
                 />
               </Field>
 
-              <Field label="ویژگی‌های دوخت">
+              <Field label="ویژگی‌ها و جزئیات ساخت">
                 <Textarea
                   value={highlightsText}
                   onChange={(event) => setHighlightsText(event.target.value)}
-                  placeholder={"دوخت ۱۰ بخیه در هر اینچ\nجیب داخلی دوتیکه"}
+                  placeholder={"تن‌خور فیت استاندارد\nجیب داخلی دوتیکه"}
                 />
               </Field>
             </div>
