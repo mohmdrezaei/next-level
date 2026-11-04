@@ -3,10 +3,18 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart, LayoutDashboard, Menu, User } from "lucide-react";
+import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, Package, User, UserRound } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { logoutAction } from "@/features/auth/actions";
 import { CartButton } from "@/features/cart/components/cart-button";
 import { CartDrawer } from "@/features/cart/components/cart-drawer";
 import { SearchDialog } from "@/features/search/components/search-dialog";
@@ -97,27 +105,95 @@ export function SiteHeader({
             <CartButton />
 
             {user ? (
-              <Link
-                href={user.role === "admin" ? "/admin" : "/account"}
-                aria-label={user.role === "admin" ? "پنل مدیریت" : "پنل کاربری"}
-                className="hidden items-center gap-2 rounded-full border border-line ps-1 pe-4 transition-colors duration-300 hover:border-ivory/25 sm:inline-flex"
-              >
-                <span
-                  className="grid size-8 place-items-center rounded-full text-[0.7rem] font-semibold"
-                  style={{
-                    background: `linear-gradient(140deg, ${user.accent}33, ${user.accent}0f)`,
-                    color: user.accent,
-                  }}
-                >
-                  {user.name.slice(0, 1)}
-                </span>
-                <span className="flex flex-col text-start leading-tight">
-                  <span className="text-[0.68rem] text-ivory">{user.name}</span>
-                  <span className="text-[0.6rem] text-mute">
-                    {user.role === "admin" ? "مدیر بوتیک" : "حساب من"}
-                  </span>
-                </span>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={user.role === "admin" ? "منوی مدیریت و حساب کاربری" : "منوی حساب کاربری"}
+                    className="group hidden items-center gap-2 rounded-full border border-line py-1 pe-3.5 ps-1 transition-colors duration-300 hover:border-ivory/25 sm:inline-flex"
+                  >
+                    <span
+                      className="grid size-8 place-items-center rounded-full text-[0.7rem] font-semibold"
+                      style={{
+                        background: `linear-gradient(140deg, ${user.accent}33, ${user.accent}0f)`,
+                        color: user.accent,
+                      }}
+                    >
+                      {user.name.slice(0, 1)}
+                    </span>
+                    <span className="flex flex-col text-start leading-tight">
+                      <span className="text-[0.68rem] text-ivory">{user.name}</span>
+                      <span className="text-[0.6rem] text-mute">
+                        {user.role === "admin" ? "مدیر بوتیک" : "حساب من"}
+                      </span>
+                    </span>
+                    <ChevronDown className="size-3 text-mute transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-medium text-ivory">{user.name}</p>
+                    <p className="text-[0.65rem] text-mute">
+                      {user.role === "admin"
+                        ? "مدیر بوتیک Next Level"
+                        : user.email || user.phone || "کاربر بوتیک"}
+                    </p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  {user.role === "admin" ? (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="flex items-center gap-2.5">
+                          <LayoutDashboard className="size-4 text-gold" />
+                          <span className="font-medium text-ivory">پنل مدیریت</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account" className="flex items-center gap-2.5">
+                          <UserRound className="size-4 text-smoke" />
+                          <span>پنل کاربری</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account/orders" className="flex items-center gap-2.5">
+                          <Package className="size-4 text-smoke" />
+                          <span>سفارش‌های من</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account" className="flex items-center gap-2.5">
+                          <UserRound className="size-4 text-gold" />
+                          <span className="font-medium text-ivory">پنل کاربری</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account/orders" className="flex items-center gap-2.5">
+                          <Package className="size-4 text-smoke" />
+                          <span>سفارش‌های من</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account/wishlist" className="flex items-center gap-2.5">
+                          <Heart className="size-4 text-smoke" />
+                          <span>علاقه‌مندی‌ها</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem variant="danger" asChild>
+                    <form action={logoutAction} className="w-full">
+                      <button type="submit" className="flex w-full items-center gap-2.5 text-start">
+                        <LogOut className="size-4" />
+                        <span>خروج از حساب</span>
+                      </button>
+                    </form>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
                 <Link href="/login">

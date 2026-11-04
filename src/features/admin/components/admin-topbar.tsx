@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Menu, Plus, Search, Store } from "lucide-react";
+import { Bell, Menu, Plus, Search, Store, UserRound } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -109,6 +109,12 @@ export function AdminTopbar({ user }: { user: SessionUser }) {
                 <DropdownMenuLabel>حساب مدیر</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
+                <DropdownMenuItem asChild>
+                  <Link href="/account" className="flex items-center gap-2">
+                    <UserRound className="size-4" />
+                    پنل کاربری
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/admin/settings">تنظیمات فروشگاه</Link>
                 </DropdownMenuItem>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Heart, LayoutDashboard, LogIn, Phone, UserRound } from "lucide-react";
+import { ArrowLeft, Heart, LayoutDashboard, LogIn, LogOut, Package, Phone, UserRound } from "lucide-react";
 import {
   Sheet,
   SheetBody,
@@ -119,34 +119,76 @@ export function MobileNav({ open, onOpenChange, user, categories, sets }: Mobile
 
             {user ? (
               <div className="flex flex-col gap-2">
-                <Link
-                  href={user.role === "admin" ? "/admin" : "/account"}
-                  className="flex items-center gap-3 rounded-lg border border-line p-3.5 transition-colors duration-300 hover:border-ivory/25"
-                >
-                  <span
-                    className="grid size-9 place-items-center rounded-full text-xs font-semibold"
-                    style={{
-                      background: `linear-gradient(140deg, ${user.accent}33, ${user.accent}0f)`,
-                      color: user.accent,
-                    }}
+                {user.role === "admin" ? (
+                  <>
+                    <div className="flex items-center gap-3 rounded-lg border border-line p-3">
+                      <span
+                        className="grid size-9 place-items-center rounded-full text-xs font-semibold"
+                        style={{
+                          background: `linear-gradient(140deg, ${user.accent}33, ${user.accent}0f)`,
+                          color: user.accent,
+                        }}
+                      >
+                        {user.name.slice(0, 1)}
+                      </span>
+                      <span className="flex flex-col">
+                        <span className="text-xs text-ivory">{user.name}</span>
+                        <span className="text-[0.65rem] text-gold-soft">مدیر بوتیک</span>
+                      </span>
+                    </div>
+
+                    <Link
+                      href="/admin"
+                      className="flex items-center justify-between rounded-lg border border-gold/30 bg-gold/5 p-3 text-xs text-ivory transition-colors duration-300 hover:border-gold/60 hover:bg-gold/10"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <LayoutDashboard className="size-4 text-gold" />
+                        <span>پنل مدیریت</span>
+                      </span>
+                      <ArrowLeft className="size-3.5 text-mute" />
+                    </Link>
+
+                    <Link
+                      href="/account"
+                      className="flex items-center justify-between rounded-lg border border-line p-3 text-xs text-smoke transition-colors duration-300 hover:border-ivory/25 hover:text-ivory"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <UserRound className="size-4 text-mute" />
+                        <span>پنل کاربری</span>
+                      </span>
+                      <ArrowLeft className="size-3.5 text-mute" />
+                    </Link>
+                  </>
+                ) : (
+                  <Link
+                    href="/account"
+                    className="flex items-center gap-3 rounded-lg border border-line p-3.5 transition-colors duration-300 hover:border-ivory/25"
                   >
-                    {user.name.slice(0, 1)}
-                  </span>
-                  <span className="flex flex-col">
-                    <span className="text-xs text-ivory">{user.name}</span>
-                    <span className="text-[0.65rem] text-mute">
-                      {user.role === "admin" ? "ورود به پنل مدیریت" : "ورود به پنل کاربری"}
+                    <span
+                      className="grid size-9 place-items-center rounded-full text-xs font-semibold"
+                      style={{
+                        background: `linear-gradient(140deg, ${user.accent}33, ${user.accent}0f)`,
+                        color: user.accent,
+                      }}
+                    >
+                      {user.name.slice(0, 1)}
                     </span>
-                  </span>
-                  {user.role === "admin" ? (
-                    <LayoutDashboard className="ms-auto size-4 text-mute" />
-                  ) : (
+                    <span className="flex flex-col">
+                      <span className="text-xs text-ivory">{user.name}</span>
+                      <span className="text-[0.65rem] text-mute">ورود به پنل کاربری</span>
+                    </span>
                     <UserRound className="ms-auto size-4 text-mute" />
-                  )}
-                </Link>
+                  </Link>
+                )}
 
                 <form action={logoutAction}>
-                  <Button type="submit" variant="ghost" size="sm" className="w-full justify-start">
+                  <Button
+                    type="submit"
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start text-danger hover:bg-danger/10 hover:text-danger"
+                  >
+                    <LogOut className="size-4" />
                     خروج از حساب
                   </Button>
                 </form>

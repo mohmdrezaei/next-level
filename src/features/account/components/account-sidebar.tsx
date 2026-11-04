@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, ShieldCheck, Sparkles } from "lucide-react";
+import { LayoutDashboard, LogOut, ShieldCheck, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,6 +81,16 @@ export function AccountSidebar({
       </Card>
 
       <Card className="p-3">
+        {user.role === "admin" ? (
+          <div className="mb-3 border-b border-line pb-3">
+            <Button asChild variant="gold" size="sm" className="w-full">
+              <Link href="/admin" className="flex items-center justify-center gap-2">
+                <LayoutDashboard className="size-4" />
+                <span>ورود به پنل مدیریت</span>
+              </Link>
+            </Button>
+          </div>
+        ) : null}
         <AccountNavLinks />
       </Card>
 
