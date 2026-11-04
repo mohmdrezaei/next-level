@@ -5,7 +5,7 @@ import { allProducts } from "@/features/products/lib/live-selectors";
 import { getSession } from "@/features/auth/server/session";
 import { ensureCustomerForUser } from "@/server/repositories/users";
 import { listWishlist } from "@/server/repositories/wishlist";
-import { toWishlistItem } from "@/features/wishlist/store/wishlist-store";
+import type { Product } from "@/features/products/types";
 
 export const metadata: Metadata = {
   title: "علاقه‌مندی‌ها",
@@ -16,11 +16,10 @@ export default async function WishlistPage() {
   const user = await getSession();
   const products = await allProducts();
 
-  let initialItems;
+  let initialProducts: Product[] | undefined;
   if (user) {
     const customerId = (await ensureCustomerForUser(user.id)) || user.id;
-    const userWishlistProducts = await listWishlist(customerId);
-    initialItems = userWishlistProducts.map(toWishlistItem);
+    initialProducts = await listWishlist(customerId);
   }
 
   return (
@@ -37,7 +36,11 @@ export default async function WishlistPage() {
         </h1>
       </header>
 
-      <WishlistPageContent products={products} initialItems={initialItems} userId={user?.id} />
+      <WishlistPageContent
+        products={products}
+        initialProducts={initialProducts}
+        userId={user?.id}
+      />
     </div>
   );
 }

@@ -8,7 +8,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Price } from "@/components/shared/price";
-import { useWishlistStore, type WishlistItem } from "../store/wishlist-store";
+import { useWishlistStore } from "../store/wishlist-store";
+import { toWishlistItem, type WishlistItem } from "../types";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { toCartLine } from "@/features/cart/types";
@@ -25,10 +26,12 @@ import type { Product } from "@/features/products/types";
 export function WishlistPageContent({
   products = [],
   initialItems,
+  initialProducts,
   userId,
 }: {
   products?: Product[];
   initialItems?: WishlistItem[];
+  initialProducts?: Product[];
   userId?: string;
 }) {
   const mounted = useMounted();
@@ -41,9 +44,12 @@ export function WishlistPageContent({
 
   React.useEffect(() => {
     if (userId !== undefined) {
-      setUser(userId, initialItems);
+      const resolved = initialProducts
+        ? initialProducts.map(toWishlistItem)
+        : initialItems;
+      setUser(userId, resolved);
     }
-  }, [userId, initialItems, setUser]);
+  }, [userId, initialItems, initialProducts, setUser]);
 
   if (!mounted) {
     return (

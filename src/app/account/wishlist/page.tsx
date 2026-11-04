@@ -3,7 +3,6 @@ import { requireUser } from "@/features/auth/server/session";
 import { allProducts } from "@/features/products/lib/live-selectors";
 import { ensureCustomerForUser } from "@/server/repositories/users";
 import { listWishlist } from "@/server/repositories/wishlist";
-import { toWishlistItem } from "@/features/wishlist/store/wishlist-store";
 
 export const metadata = { title: "علاقه‌مندی‌ها" };
 
@@ -30,7 +29,7 @@ export default async function AccountWishlistPage() {
 
       <WishlistPageContent
         products={products}
-        initialItems={userWishlistProducts.map(toWishlistItem)}
+        initialProducts={userWishlistProducts}
         userId={user.id}
       />
     </div>
